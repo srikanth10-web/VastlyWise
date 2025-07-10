@@ -23,7 +23,7 @@ export function AppHeader({ logoUrl, currentUser, onNavigate, onLogout }: AppHea
           >
             {!logoUrl && <div className="w-full h-full bg-black rounded-full"></div>}
           </div>
-          <span className="text-xl font-semibold text-gray-900">Logo</span>
+          <span className="text-xl font-semibold text-gray-900">VastlyWise</span>
         </div>
 
         {/* Navigation */}

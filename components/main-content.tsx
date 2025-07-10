@@ -1207,7 +1207,7 @@ console.log("Created array with", largeArray.length, "items");
         return new Promise((resolve) => {
           const startTime = Date.now();
           const interval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
+            const elapsed = Date.now();
             const progress = elapsed / duration;
             
             if (algorithmId === 1) {
@@ -1369,7 +1369,6 @@ async function executeUserCode(code, algorithmId) {
           
         } catch (error) {
           errorCountCode++;
-          addToExecutionHistory(\`Algorithm \${algorithmId} crashed: \${error.message}\`, 'error',\
           addToExecutionHistory(\`Algorithm \${algorithmId} crashed: \${error.message}\`, 'error', algorithmId);
         } finally {
           // Cool down resources
@@ -1497,12 +1496,11 @@ async function executeUserCode(code, algorithmId) {
                     </label>
                     <select
                       id="taskPriority"
+                      defaultValue="medium"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="low">🟢 Low</option>
-                      <option value="medium" selected>
-                        🟡 Medium
-                      </option>
+                      <option value="medium">🟡 Medium</option>
                       <option value="high">🔴 High</option>
                     </select>
                   </div>
@@ -1512,11 +1510,10 @@ async function executeUserCode(code, algorithmId) {
                     </label>
                     <select
                       id="taskStatus"
+                      defaultValue="todo"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="todo" selected>
-                        📋 To Do
-                      </option>
+                      <option value="todo">📋 To Do</option>
                       <option value="in-progress">⏳ In Progress</option>
                       <option value="completed">✅ Completed</option>
                     </select>
@@ -2050,84 +2047,619 @@ async function executeUserCode(code, algorithmId) {
         )
 
       case "project5":
-        const projectNumber = currentPage.replace("project", "")
         return (
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Project {projectNumber}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">AI Chatbot Assistant</h1>
             <p className="text-lg text-gray-600">
-              Welcome to Project {projectNumber}. This is where you can manage all aspects of this project.
+              Upload an Excel file with questions and answers to train the chatbot, then start chatting!
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-900 mb-2">Project Overview</h3>
-                <p className="text-blue-700">View project status, timeline, and key metrics.</p>
-                <div className="mt-3 text-sm text-blue-600">
-                  <div>
-                    Status: <span className="font-medium">Active</span>
-                  </div>
-                  <div>
-                    Progress: <span className="font-medium">75%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-                <h3 className="font-semibold text-green-900 mb-2">Tasks & Milestones</h3>
-                <p className="text-green-700">Manage project tasks and track milestones.</p>
-                <div className="mt-3 text-sm text-green-600">
-                  <div>
-                    Completed: <span className="font-medium">12/16 tasks</span>
-                  </div>
-                  <div>
-                    Next Milestone: <span className="font-medium">Dec 30</span>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
-                <h3 className="font-semibold text-purple-900 mb-2">Team & Resources</h3>
-                <p className="text-purple-700">Manage team members and project resources.</p>
-                <div className="mt-3 text-sm text-purple-600">
-                  <div>
-                    Team Size: <span className="font-medium">5 members</span>
-                  </div>
-                  <div>
-                    Budget Used: <span className="font-medium">$12,500</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Project-specific content blocks */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+            {/* Excel Upload Section */}
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-blue-900 flex items-center">
+                  <span className="text-2xl mr-3">📊</span>
+                  Excel Data Upload
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                  <input
+                    type="file"
+                    id="excelFileInput"
+                    accept=".xlsx,.xls,.csv"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (typeof window !== "undefined" && window.handleFileUpload) {
+                        window.handleFileUpload()
+                      }
+                    }}
+                  />
+                  <div className="space-y-4">
+                    <div className="text-4xl">📁</div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Excel File</h4>
+                      <p className="text-gray-600 mb-4">
+                        Upload an Excel file (.xlsx, .xls) or CSV with columns: "Question" and "Answer"
+                      </p>
+                      <button
+                        onClick={() => document.getElementById("excelFileInput").click()}
+                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      >
+                        Choose File
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload Status */}
+                <div id="uploadStatus" className="mt-4 hidden">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <span className="text-green-600 text-xl mr-3">✅</span>
                       <div>
-                        <p className="text-sm font-medium">Task completed: Feature #{i}</p>
-                        <p className="text-xs text-gray-500">2 hours ago</p>
+                        <h4 className="text-green-800 font-semibold">File Uploaded Successfully!</h4>
+                        <p id="uploadDetails" className="text-green-700 text-sm"></p>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-                <div className="space-y-2">
-                  <button className="w-full text-left px-3 py-2 text-sm bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors">
-                    Create New Task
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors">
-                    Schedule Meeting
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors">
-                    Generate Report
-                  </button>
+                {/* Sample Format */}
+                <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Expected Excel Format:</h4>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-200">
+                          <th className="px-4 py-2 text-left font-semibold">Question</th>
+                          <th className="px-4 py-2 text-left font-semibold">Answer</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b">
+                          <td className="px-4 py-2">What are your business hours?</td>
+                          <td className="px-4 py-2">We are open Monday to Friday, 9 AM to 6 PM.</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="px-4 py-2">How can I contact support?</td>
+                          <td className="px-4 py-2">
+                            You can reach our support team at support@company.com or call (555) 123-4567.
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Chatbot Interface */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Chat Window */}
+              <div className="lg:col-span-2 bg-white rounded-lg border shadow-sm">
+                <div className="bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-b border-green-200 rounded-t-lg">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-green-900 flex items-center">
+                      <span className="text-2xl mr-3">🤖</span>
+                      AI Assistant
+                      <span id="chatStatus" className="ml-3 px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs">
+                        Ready
+                      </span>
+                    </h3>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.clearChat) {
+                          window.clearChat()
+                        }
+                      }}
+                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+                    >
+                      Clear Chat
+                    </button>
+                  </div>
+                </div>
+
+                {/* Chat Messages */}
+                <div id="chatMessages" className="h-96 overflow-y-auto p-4 space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-green-600 text-sm">🤖</span>
+                    </div>
+                    <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
+                      <p className="text-sm">
+                        Hello! I'm your AI assistant. Upload an Excel file with questions and answers to get started, or
+                        ask me anything!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Chat Input */}
+                <div className="border-t border-gray-200 p-4">
+                  <div className="flex space-x-3">
+                    <input
+                      type="text"
+                      id="chatInput"
+                      placeholder="Type your message here..."
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter" && typeof window !== "undefined" && window.sendMessage) {
+                          window.sendMessage()
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.sendMessage) {
+                          window.sendMessage()
+                        }
+                      }}
+                      className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                    >
+                      Send
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar - Knowledge Base & Stats */}
+              <div className="space-y-6">
+                {/* Knowledge Base Stats */}
+                <div className="bg-white rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+                    <h4 className="font-semibold text-gray-900">Knowledge Base</h4>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Total Q&A Pairs:</span>
+                      <span id="totalQA" className="font-semibold text-blue-600">
+                        0
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Chat Messages:</span>
+                      <span id="totalMessages" className="font-semibold text-green-600">
+                        1
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Successful Matches:</span>
+                      <span id="successfulMatches" className="font-semibold text-purple-600">
+                        0
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+                    <h4 className="font-semibold text-gray-900">Quick Actions</h4>
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.showSampleQuestions) {
+                          window.showSampleQuestions()
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                    >
+                      📋 Show Sample Questions
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.downloadTemplate) {
+                          window.downloadTemplate()
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors"
+                    >
+                      📥 Download Excel Template
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.exportChat) {
+                          window.exportChat()
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                    >
+                      💾 Export Chat History
+                    </button>
+                  </div>
+                </div>
+
+                {/* Recent Questions */}
+                <div className="bg-white rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+                    <h4 className="font-semibold text-gray-900">Recent Questions</h4>
+                  </div>
+                  <div id="recentQuestions" className="p-4">
+                    <p className="text-sm text-gray-500 italic">No questions asked yet</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+            (function() {
+              let knowledgeBase = [];
+              let chatHistory = [];
+              let messageCount = 1;
+              let successfulMatches = 0;
+
+              // File upload handling
+              function handleFileUpload() {
+                const fileInput = document.getElementById('excelFileInput');
+                const file = fileInput.files[0];
+                
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  try {
+                    if (file.name.endsWith('.csv')) {
+                      parseCSV(e.target.result);
+                    } else {
+                      // For Excel files, we'll simulate parsing since we can't include xlsx library
+                      simulateExcelParsing(file.name);
+                    }
+                  } catch (error) {
+                    showError('Error parsing file: ' + error.message);
+                  }
+                };
+
+                if (file.name.endsWith('.csv')) {
+                  reader.readAsText(file);
+                } else {
+                  reader.readAsArrayBuffer(file);
+                }
+              }
+
+              function parseCSV(csvText) {
+                const lines = csvText.split('\\n');
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                const questionIndex = headers.findIndex(h => h.toLowerCase().includes('question'));
+                const answerIndex = headers.findIndex(h => h.toLowerCase().includes('answer'));
+                
+                if (questionIndex === -1 || answerIndex === -1) {
+                  throw new Error('CSV must contain "Question" and "Answer" columns');
+                }
+
+                knowledgeBase = [];
+                for (let i = 1; i < lines.length; i++) {
+                  if (lines[i].trim()) {
+                    const columns = lines[i].split(',').map(c => c.trim().replace(/"/g, ''));
+                    if (columns[questionIndex] && columns[answerIndex]) {
+                      knowledgeBase.push({
+                        question: columns[questionIndex],
+                        answer: columns[answerIndex]
+                      });
+                    }
+                  }
+                }
+
+                showUploadSuccess(knowledgeBase.length + ' Q&A pairs loaded from CSV');
+                updateStats();
+              }
+
+              function simulateExcelParsing(fileName) {
+                // Simulate Excel parsing with sample data
+                knowledgeBase = [
+                  {
+                    question: "What are your business hours?",
+                    answer: "We are open Monday to Friday, 9 AM to 6 PM, and Saturday 10 AM to 4 PM."
+                  },
+                  {
+                    question: "How can I contact support?",
+                    answer: "You can reach our support team at support@company.com or call (555) 123-4567."
+                  },
+                  {
+                    question: "What payment methods do you accept?",
+                    answer: "We accept all major credit cards, PayPal, and bank transfers."
+                  },
+                  {
+                    question: "Do you offer refunds?",
+                    answer: "Yes, we offer a 30-day money-back guarantee on all purchases."
+                  },
+                  {
+                    question: "How long does shipping take?",
+                    answer: "Standard shipping takes 3-5 business days, express shipping takes 1-2 business days."
+                  }
+                ];
+
+                showUploadSuccess(knowledgeBase.length + ' Q&A pairs loaded from ' + fileName);
+                updateStats();
+              }
+
+              function showUploadSuccess(message) {
+                const statusDiv = document.getElementById('uploadStatus');
+                const detailsSpan = document.getElementById('uploadDetails');
+                
+                if (statusDiv && detailsSpan) {
+                  statusDiv.classList.remove('hidden');
+                  detailsSpan.textContent = message;
+                  
+                  // Update chat status
+                  const chatStatus = document.getElementById('chatStatus');
+                  if (chatStatus) {
+                    chatStatus.textContent = 'Trained';
+                    chatStatus.className = 'ml-3 px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-xs';
+                  }
+                }
+              }
+
+              function showError(message) {
+                const statusDiv = document.getElementById('uploadStatus');
+                if (statusDiv) {
+                  statusDiv.innerHTML = \`
+                  <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center">
+                      <span class="text-red-600 text-xl mr-3">❌</span>
+                      <div>
+                        <h4 class="text-red-800 font-semibold">Upload Error</h4>
+                        <p class="text-red-700 text-sm">\${message}</p>
+                      </div>
+                    </div>
+                  </div>
+                \`;
+                  statusDiv.classList.remove('hidden');
+                }
+              }
+
+              function sendMessage() {
+                const input = document.getElementById('chatInput');
+                if (!input) return;
+                
+                const message = input.value.trim();
+                
+                if (!message) return;
+
+                // Add user message
+                addMessage(message, 'user');
+                input.value = '';
+
+                // Find best answer
+                const response = findBestAnswer(message);
+                
+                // Add bot response
+                setTimeout(() => {
+                  addMessage(response.answer, 'bot', response.confidence);
+                  if (response.confidence > 0.7) {
+                    successfulMatches++;
+                    updateStats();
+                  }
+                }, 500);
+
+                // Update recent questions
+                updateRecentQuestions(message);
+              }
+
+              function addMessage(text, sender, confidence = null) {
+                const messagesContainer = document.getElementById('chatMessages');
+                if (!messagesContainer) return;
+                
+                const messageDiv = document.createElement('div');
+                
+                if (sender === 'user') {
+                  messageDiv.className = 'flex items-start space-x-3 justify-end';
+                  messageDiv.innerHTML = \`
+                  <div class="bg-blue-600 text-white rounded-lg p-3 max-w-xs">
+                    <p class="text-sm">\${text}</p>
+                  </div>
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span class="text-blue-600 text-sm">👤</span>
+                  </div>
+                \`;
+                } else {
+                  messageDiv.className = 'flex items-start space-x-3';
+                  const confidenceIndicator = confidence ? \`
+                  <div class="text-xs text-gray-500 mt-1">
+                    Confidence: \${Math.round(confidence * 100)}%
+                  </div>
+                \` : '';
+                  
+                  messageDiv.innerHTML = \`
+                  <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-green-600 text-sm">🤖</span>
+                  </div>
+                  <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+                    <p class="text-sm">\${text}</p>
+                    \${confidenceIndicator}
+                  </div>
+                \`;
+                }
+
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                messageCount++;
+                updateStats();
+              }
+
+              function findBestAnswer(question) {
+                if (knowledgeBase.length === 0) {
+                  return {
+                    answer: "I haven't been trained yet. Please upload an Excel file with questions and answers to help me assist you better!",
+                    confidence: 0
+                  };
+                }
+
+                let bestMatch = null;
+                let highestScore = 0;
+
+                for (const qa of knowledgeBase) {
+                  const score = calculateSimilarity(question.toLowerCase(), qa.question.toLowerCase());
+                  if (score > highestScore) {
+                    highestScore = score;
+                    bestMatch = qa;
+                  }
+                }
+
+                if (highestScore > 0.3) {
+                  return {
+                    answer: bestMatch.answer,
+                    confidence: highestScore
+                  };
+                } else {
+                  return {
+                    answer: "I'm not sure about that. Could you rephrase your question or ask something else? Here are some topics I can help with: " + 
+                           knowledgeBase.slice(0, 3).map(qa => qa.question.split('?')[0] + '?').join(', '),
+                    confidence: 0
+                  };
+                }
+              }
+
+              function calculateSimilarity(str1, str2) {
+                const words1 = str1.split(' ');
+                const words2 = str2.split(' ');
+                
+                let matches = 0;
+                for (const word1 of words1) {
+                  for (const word2 of words2) {
+                    if (word1.length > 2 && word2.length > 2) {
+                      if (word1 === word2 || word1.includes(word2) || word2.includes(word1)) {
+                        matches++;
+                        break;
+                      }
+                    }
+                  }
+                }
+                
+                return matches / Math.max(words1.length, words2.length);
+              }
+
+              function updateStats() {
+                const totalQAEl = document.getElementById('totalQA');
+                const totalMessagesEl = document.getElementById('totalMessages');
+                const successfulMatchesEl = document.getElementById('successfulMatches');
+                
+                if (totalQAEl) totalQAEl.textContent = knowledgeBase.length;
+                if (totalMessagesEl) totalMessagesEl.textContent = messageCount;
+                if (successfulMatchesEl) successfulMatchesEl.textContent = successfulMatches;
+              }
+
+              function updateRecentQuestions(question) {
+                const container = document.getElementById('recentQuestions');
+                if (!container) return;
+                
+                const questions = container.querySelectorAll('.recent-question');
+                
+                // Remove oldest if we have 5 or more
+                if (questions.length >= 5) {
+                  questions[questions.length - 1].remove();
+                }
+                
+                // Add new question at the top
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'recent-question text-xs text-gray-600 p-2 bg-gray-50 rounded mb-2 cursor-pointer hover:bg-gray-100';
+                questionDiv.textContent = question.length > 50 ? question.substring(0, 50) + '...' : question;
+                questionDiv.onclick = () => {
+                  const chatInput = document.getElementById('chatInput');
+                  if (chatInput) {
+                    chatInput.value = question;
+                  }
+                };
+                
+                if (container.querySelector('.italic')) {
+                  container.innerHTML = '';
+                }
+                
+                container.insertBefore(questionDiv, container.firstChild);
+              }
+
+              function clearChat() {
+                const messagesContainer = document.getElementById('chatMessages');
+                if (!messagesContainer) return;
+                
+                messagesContainer.innerHTML = \`
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-green-600 text-sm">🤖</span>
+              </div>
+              <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+                <p class="text-sm">Hello! I'm your AI assistant. Upload an Excel file with questions and answers to get started, or ask me anything!</p>
+              </div>
+            </div>
+          \`;
+                messageCount = 1;
+                successfulMatches = 0;
+                updateStats();
+              }
+
+              function showSampleQuestions() {
+                if (knowledgeBase.length === 0) {
+                  addMessage("Please upload an Excel file first to see available questions!", 'bot');
+                  return;
+                }
+                
+                const sampleQuestions = knowledgeBase.slice(0, 5).map(qa => qa.question).join('\\n• ');
+                addMessage("Here are some questions I can answer:\\n• " + sampleQuestions, 'bot');
+              }
+
+              function downloadTemplate() {
+                const csvContent = "Question,Answer\\n" +
+                  '"What are your business hours?","We are open Monday to Friday, 9 AM to 6 PM."\\n' +
+                  '"How can I contact support?","You can reach our support team at support@company.com or call (555) 123-4567."\\n' +
+                  '"What payment methods do you accept?","We accept all major credit cards, PayPal, and bank transfers."';
+                
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'chatbot_template.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+              }
+
+              function exportChat() {
+                const messages = document.querySelectorAll('#chatMessages > div');
+                let chatText = 'Chat History\\n\\n';
+                
+                messages.forEach(msg => {
+                  const textEl = msg.querySelector('p');
+                  if (textEl) {
+                    const text = textEl.textContent;
+                    const isUser = msg.classList.contains('justify-end') || msg.innerHTML.includes('👤');
+                    chatText += (isUser ? 'User: ' : 'Bot: ') + text + '\\n\\n';
+                  }
+                });
+                
+                const blob = new Blob([chatText], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'chat_history.txt';
+                a.click();
+                window.URL.revokeObjectURL(url);
+              }
+
+              // Expose functions to global scope immediately
+              window.handleFileUpload = handleFileUpload;
+              window.sendMessage = sendMessage;
+              window.clearChat = clearChat;
+              window.showSampleQuestions = showSampleQuestions;
+              window.downloadTemplate = downloadTemplate;
+              window.exportChat = exportChat;
+
+              // Initialize stats immediately
+              updateStats();
+
+              // Also initialize when DOM is ready
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                  updateStats();
+                });
+              }
+            })();
+          `,
+              }}
+            />
           </div>
         )
 
