@@ -1409,6 +1409,714 @@ async function executeUserCode(code, algorithmId) {
           </div>
         )
 
+      case "project3":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold text-gray-900">Website Preview Tool</h1>
+            <p className="text-lg text-gray-600">
+              Preview how websites look across different devices, operating systems, and browsers.
+            </p>
+
+            {/* URL Input Section */}
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-200 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-purple-900 flex items-center">
+                  <span className="text-2xl mr-3">🌐</span>
+                  Website URL Input
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="flex space-x-4">
+                  <input
+                    type="url"
+                    id="websiteUrl"
+                    placeholder="Enter website URL (e.g., https://example.com)"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    defaultValue="https://example.com"
+                  />
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.loadWebsitePreview) {
+                        window.loadWebsitePreview()
+                      }
+                    }}
+                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                  >
+                    Load Preview
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Enter any website URL to see how it appears across different devices and browsers
+                </p>
+              </div>
+            </div>
+
+            {/* Device Selection */}
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <span className="text-2xl mr-3">📱</span>
+                  Device & Browser Selection
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Mobile Devices */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">📱 Mobile Devices</h4>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("iphone-14", "iPhone 14", "390x844", "iOS 16")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        📱 iPhone 14 (390×844)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("iphone-se", "iPhone SE", "375x667", "iOS 16")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        📱 iPhone SE (375×667)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("samsung-s23", "Samsung Galaxy S23", "360x780", "Android 13")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors"
+                      >
+                        📱 Samsung Galaxy S23 (360×780)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("pixel-7", "Google Pixel 7", "412x915", "Android 13")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors"
+                      >
+                        📱 Google Pixel 7 (412×915)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Tablets */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">📟 Tablets</h4>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("ipad-air", "iPad Air", "820x1180", "iPadOS 16")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        📟 iPad Air (820×1180)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("ipad-mini", "iPad Mini", "744x1133", "iPadOS 16")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        📟 iPad Mini (744×1133)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("samsung-tab", "Samsung Galaxy Tab", "800x1280", "Android 13")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors"
+                      >
+                        📟 Samsung Galaxy Tab (800×1280)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("surface-pro", "Surface Pro", "912x1368", "Windows 11")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors"
+                      >
+                        📟 Surface Pro (912×1368)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Laptops/Desktops */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">💻 Laptops & Desktops</h4>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("macbook-air", "MacBook Air", "1440x900", "macOS Ventura")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 transition-colors"
+                      >
+                        💻 MacBook Air (1440×900)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("macbook-pro", "MacBook Pro", "1512x982", "macOS Ventura")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 transition-colors"
+                      >
+                        💻 MacBook Pro (1512×982)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("windows-laptop", "Windows Laptop", "1366x768", "Windows 11")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        💻 Windows Laptop (1366×768)
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined" && window.selectDevice) {
+                            window.selectDevice("desktop-4k", "Desktop 4K", "1920x1080", "Windows 11")
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+                      >
+                        🖥️ Desktop 4K (1920×1080)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Browser Selection */}
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <span className="text-2xl mr-3">🌐</span>
+                  Browser Selection
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.selectBrowser) {
+                        window.selectBrowser("chrome", "Google Chrome", "#4285f4")
+                      }
+                    }}
+                    className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">C</span>
+                    </div>
+                    <span className="font-medium">Chrome</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.selectBrowser) {
+                        window.selectBrowser("firefox", "Mozilla Firefox", "#ff7139")
+                      }
+                    }}
+                    className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg border border-orange-200 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">F</span>
+                    </div>
+                    <span className="font-medium">Firefox</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.selectBrowser) {
+                        window.selectBrowser("safari", "Safari", "#006cff")
+                      }
+                    }}
+                    className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">S</span>
+                    </div>
+                    <span className="font-medium">Safari</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.selectBrowser) {
+                        window.selectBrowser("edge", "Microsoft Edge", "#0078d4")
+                      }
+                    }}
+                    className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">E</span>
+                    </div>
+                    <span className="font-medium">Edge</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Selection Display */}
+            <div id="currentSelection" className="bg-white rounded-lg border shadow-sm hidden">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <span className="text-2xl mr-3">📋</span>
+                  Current Selection
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-900 mb-2">Device</h4>
+                    <div id="selectedDevice" className="text-blue-700">
+                      No device selected
+                    </div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-green-900 mb-2">Browser</h4>
+                    <div id="selectedBrowser" className="text-green-700">
+                      No browser selected
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-purple-900 mb-2">Website</h4>
+                    <div id="selectedWebsite" className="text-purple-700">
+                      No website loaded
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Preview Area */}
+            <div id="previewArea" className="bg-white rounded-lg border shadow-sm hidden">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <span className="text-2xl mr-3">👁️</span>
+                    Website Preview
+                  </h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.refreshPreview) {
+                          window.refreshPreview()
+                        }
+                      }}
+                      className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                    >
+                      🔄 Refresh
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined" && window.takeScreenshot) {
+                          window.takeScreenshot()
+                        }
+                      }}
+                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+                    >
+                      📸 Screenshot
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6">
+                {/* Device Frame */}
+                <div id="deviceFrame" className="mx-auto bg-gray-800 rounded-lg p-4 shadow-2xl">
+                  <div id="deviceScreen" className="bg-white rounded overflow-hidden shadow-inner">
+                    <div id="browserChrome" className="bg-gray-100 px-4 py-2 border-b flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      </div>
+                      <div className="flex-1 bg-white rounded px-3 py-1 text-sm text-gray-600">
+                        <span id="addressBar">https://example.com</span>
+                      </div>
+                      <div id="browserIcon" className="w-6 h-6 bg-blue-500 rounded"></div>
+                    </div>
+                    <div id="websiteContent" className="relative overflow-hidden">
+                      <iframe
+                        id="websiteFrame"
+                        src="https://example.com"
+                        className="w-full h-full border-0"
+                        style={{ minHeight: "400px" }}
+                        sandbox="allow-same-origin allow-scripts"
+                      />
+                      <div
+                        id="loadingOverlay"
+                        className="absolute inset-0 bg-white flex items-center justify-center hidden"
+                      >
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                          <p className="text-gray-600">Loading website...</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Device Info */}
+                <div id="deviceInfo" className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-gray-600 text-sm">Resolution</div>
+                    <div id="deviceResolution" className="font-semibold">
+                      -
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-gray-600 text-sm">Operating System</div>
+                    <div id="deviceOS" className="font-semibold">
+                      -
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-gray-600 text-sm">Browser</div>
+                    <div id="deviceBrowser" className="font-semibold">
+                      -
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-gray-600 text-sm">Device Type</div>
+                    <div id="deviceType" className="font-semibold">
+                      -
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison View */}
+            <div id="comparisonArea" className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <span className="text-2xl mr-3">🔍</span>
+                    Multi-Device Comparison
+                  </h3>
+                  <button
+                    onClick={() => {
+                      if (typeof window !== "undefined" && window.showComparison) {
+                        window.showComparison()
+                      }
+                    }}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                  >
+                    Show All Devices
+                  </button>
+                </div>
+              </div>
+              <div id="comparisonGrid" className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                {/* Comparison items will be inserted here */}
+              </div>
+            </div>
+
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+            (function() {
+              let currentDevice = null;
+              let currentBrowser = null;
+              let currentWebsite = 'https://example.com';
+
+              const devices = {
+                'iphone-14': { name: 'iPhone 14', width: 390, height: 844, os: 'iOS 16', type: 'Mobile' },
+                'iphone-se': { name: 'iPhone SE', width: 375, height: 667, os: 'iOS 16', type: 'Mobile' },
+                'samsung-s23': { name: 'Samsung Galaxy S23', width: 360, height: 780, os: 'Android 13', type: 'Mobile' },
+                'pixel-7': { name: 'Google Pixel 7', width: 412, height: 915, os: 'Android 13', type: 'Mobile' },
+                'ipad-air': { name: 'iPad Air', width: 820, height: 1180, os: 'iPadOS 16', type: 'Tablet' },
+                'ipad-mini': { name: 'iPad Mini', width: 744, height: 1133, os: 'iPadOS 16', type: 'Tablet' },
+                'samsung-tab': { name: 'Samsung Galaxy Tab', width: 800, height: 1280, os: 'Android 13', type: 'Tablet' },
+                'surface-pro': { name: 'Surface Pro', width: 912, height: 1368, os: 'Windows 11', type: 'Tablet' },
+                'macbook-air': { name: 'MacBook Air', width: 1440, height: 900, os: 'macOS Ventura', type: 'Laptop' },
+                'macbook-pro': { name: 'MacBook Pro', width: 1512, height: 982, os: 'macOS Ventura', type: 'Laptop' },
+                'windows-laptop': { name: 'Windows Laptop', width: 1366, height: 768, os: 'Windows 11', type: 'Laptop' },
+                'desktop-4k': { name: 'Desktop 4K', width: 1920, height: 1080, os: 'Windows 11', type: 'Desktop' }
+              };
+
+              const browsers = {
+                'chrome': { name: 'Google Chrome', color: '#4285f4' },
+                'firefox': { name: 'Mozilla Firefox', color: '#ff7139' },
+                'safari': { name: 'Safari', color: '#006cff' },
+                'edge': { name: 'Microsoft Edge', color: '#0078d4' }
+              };
+
+              function loadWebsitePreview() {
+                const urlInput = document.getElementById('websiteUrl');
+                if (!urlInput) return;
+                
+                let url = urlInput.value.trim();
+                if (!url) {
+                  alert('Please enter a website URL');
+                  return;
+                }
+                
+                // Add protocol if missing
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                  url = 'https://' + url;
+                }
+                
+                currentWebsite = url;
+                updateSelectedWebsite();
+                
+                if (currentDevice && currentBrowser) {
+                  updatePreview();
+                }
+              }
+
+              function selectDevice(deviceId, deviceName, resolution, os) {
+                currentDevice = deviceId;
+                updateSelectedDevice();
+                updateCurrentSelection();
+                
+                if (currentBrowser) {
+                  updatePreview();
+                }
+              }
+
+              function selectBrowser(browserId, browserName, color) {
+                currentBrowser = browserId;
+                updateSelectedBrowser();
+                updateCurrentSelection();
+                
+                if (currentDevice) {
+                  updatePreview();
+                }
+              }
+
+              function updateSelectedDevice() {
+                const selectedDeviceEl = document.getElementById('selectedDevice');
+                if (selectedDeviceEl && currentDevice) {
+                  const device = devices[currentDevice];
+                  selectedDeviceEl.textContent = \`\${device.name} (\${device.width}×\${device.height})\`;
+                }
+              }
+
+              function updateSelectedBrowser() {
+                const selectedBrowserEl = document.getElementById('selectedBrowser');
+                if (selectedBrowserEl && currentBrowser) {
+                  const browser = browsers[currentBrowser];
+                  selectedBrowserEl.textContent = browser.name;
+                }
+              }
+
+              function updateSelectedWebsite() {
+                const selectedWebsiteEl = document.getElementById('selectedWebsite');
+                if (selectedWebsiteEl) {
+                  selectedWebsiteEl.textContent = currentWebsite;
+                }
+              }
+
+              function updateCurrentSelection() {
+                const selectionEl = document.getElementById('currentSelection');
+                if (selectionEl && currentDevice && currentBrowser) {
+                  selectionEl.classList.remove('hidden');
+                }
+              }
+
+              function updatePreview() {
+                if (!currentDevice || !currentBrowser) return;
+                
+                const device = devices[currentDevice];
+                const browser = browsers[currentBrowser];
+                
+                // Show preview area
+                const previewArea = document.getElementById('previewArea');
+                if (previewArea) {
+                  previewArea.classList.remove('hidden');
+                }
+                
+                // Update device frame
+                const deviceFrame = document.getElementById('deviceFrame');
+                const deviceScreen = document.getElementById('deviceScreen');
+                
+                if (deviceFrame && deviceScreen) {
+                  // Calculate scale to fit in container
+                  const maxWidth = 800;
+                  const maxHeight = 600;
+                  const scale = Math.min(maxWidth / device.width, maxHeight / device.height, 1);
+                  
+                  deviceScreen.style.width = device.width + 'px';
+                  deviceScreen.style.height = device.height + 'px';
+                  deviceFrame.style.transform = \`scale(\${scale})\`;
+                  deviceFrame.style.transformOrigin = 'center top';
+                }
+                
+                // Update browser chrome
+                const browserIcon = document.getElementById('browserIcon');
+                if (browserIcon) {
+                  browserIcon.style.backgroundColor = browser.color;
+                }
+                
+                // Update address bar
+                const addressBar = document.getElementById('addressBar');
+                if (addressBar) {
+                  addressBar.textContent = currentWebsite;
+                }
+                
+                // Update iframe
+                const websiteFrame = document.getElementById('websiteFrame');
+                if (websiteFrame) {
+                  showLoading();
+                  websiteFrame.src = currentWebsite;
+                  websiteFrame.onload = hideLoading;
+                  websiteFrame.onerror = () => {
+                    hideLoading();
+                    showError();
+                  };
+                }
+                
+                // Update device info
+                updateDeviceInfo();
+              }
+
+              function updateDeviceInfo() {
+                if (!currentDevice || !currentBrowser) return;
+                
+                const device = devices[currentDevice];
+                const browser = browsers[currentBrowser];
+                
+                const resolutionEl = document.getElementById('deviceResolution');
+                const osEl = document.getElementById('deviceOS');
+                const browserEl = document.getElementById('deviceBrowser');
+                const typeEl = document.getElementById('deviceType');
+                
+                if (resolutionEl) resolutionEl.textContent = \`\${device.width}×\${device.height}\`;
+                if (osEl) osEl.textContent = device.os;
+                if (browserEl) browserEl.textContent = browser.name;
+                if (typeEl) typeEl.textContent = device.type;
+              }
+
+              function showLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                  loadingOverlay.classList.remove('hidden');
+                }
+              }
+
+              function hideLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                  loadingOverlay.classList.add('hidden');
+                }
+              }
+
+              function showError() {
+                const websiteContent = document.getElementById('websiteContent');
+                if (websiteContent) {
+                  websiteContent.innerHTML = \`
+                    <div class="flex items-center justify-center h-64 bg-red-50">
+                      <div class="text-center">
+                        <div class="text-4xl mb-2">⚠️</div>
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">Failed to Load Website</h3>
+                        <p class="text-red-600 text-sm">The website could not be loaded due to CORS restrictions or network issues.</p>
+                        <p class="text-red-600 text-sm mt-1">Try a different URL or check if the website is accessible.</p>
+                      </div>
+                    </div>
+                  \`;
+                }
+              }
+
+              function refreshPreview() {
+                if (currentDevice && currentBrowser) {
+                  updatePreview();
+                }
+              }
+
+              function takeScreenshot() {
+                // Simulate screenshot functionality
+                const device = devices[currentDevice];
+                const browser = browsers[currentBrowser];
+                
+                alert(\`Screenshot taken!\\n\\nDevice: \${device.name}\\nBrowser: \${browser.name}\\nWebsite: \${currentWebsite}\\n\\nIn a real implementation, this would capture the actual rendered content.\`);
+              }
+
+              function showComparison() {
+                const comparisonGrid = document.getElementById('comparisonGrid');
+                if (!comparisonGrid) return;
+                
+                comparisonGrid.classList.remove('hidden');
+                comparisonGrid.innerHTML = '';
+                
+                // Show previews for different device categories
+                const sampleDevices = ['iphone-14', 'ipad-air', 'macbook-air'];
+                const sampleBrowser = currentBrowser || 'chrome';
+                
+                sampleDevices.forEach(deviceId => {
+                  const device = devices[deviceId];
+                  const browser = browsers[sampleBrowser];
+                  
+                  const comparisonItem = document.createElement('div');
+                  comparisonItem.className = 'bg-gray-50 rounded-lg p-4 border';
+                  comparisonItem.innerHTML = \`
+                    <div class="text-center mb-3">
+                      <h4 class="font-semibold text-gray-900">\${device.name}</h4>
+                      <p class="text-sm text-gray-600">\${device.width}×\${device.height} • \${device.os}</p>
+                    </div>
+                    <div class="bg-gray-800 rounded p-2 mx-auto" style="width: fit-content;">
+                      <div class="bg-white rounded overflow-hidden shadow-inner" style="width: \${Math.min(device.width * 0.2, 200)}px; height: \${Math.min(device.height * 0.2, 150)}px;">
+                        <div class="bg-gray-100 px-2 py-1 text-xs flex items-center space-x-1">
+                          <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                          <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <div class="flex-1 bg-white rounded px-1 text-gray-500 text-xs">\${currentWebsite}</div>
+                        </div>
+                        <div class="bg-blue-100 h-full flex items-center justify-center text-xs text-gray-600">
+                          Website Preview
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <button onclick="window.selectDevice('\${deviceId}', '\${device.name}', '\${device.width}x\${device.height}', '\${device.os}')" 
+                              class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors">
+                        Select Device
+                      </button>
+                    </div>
+                  \`;
+                  
+                  comparisonGrid.appendChild(comparisonItem);
+                });
+              }
+
+              // Expose functions to global scope
+              window.loadWebsitePreview = loadWebsitePreview;
+              window.selectDevice = selectDevice;
+              window.selectBrowser = selectBrowser;
+              window.refreshPreview = refreshPreview;
+              window.takeScreenshot = takeScreenshot;
+              window.showComparison = showComparison;
+
+              // Initialize with default selections
+              document.addEventListener('DOMContentLoaded', function() {
+                updateSelectedWebsite();
+              });
+
+              // Initialize immediately if DOM is already ready
+              if (document.readyState !== 'loading') {
+                updateSelectedWebsite();
+              }
+            })();
+          `,
+              }}
+            />
+          </div>
+        )
+
       case "project4":
         return (
           <div className="space-y-6">
@@ -2608,7 +3316,7 @@ async function executeUserCode(code, algorithmId) {
                   '"How can I contact support?","You can reach our support team at support@company.com or call (555) 123-4567."\\n' +
                   '"What payment methods do you accept?","We accept all major credit cards, PayPal, and bank transfers."';
                 
-                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const blob = new Blob([csvContent], { type: 'text/plain' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
