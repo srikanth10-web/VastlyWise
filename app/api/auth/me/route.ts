@@ -1,16 +1,19 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { jwtVerify } from "jose"
-import { prisma } from "./prisma"
+import { prisma } from "@/lib/prisma"
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "")
 
-export async function getCurrentUser(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // Get token from cookie
     const token = request.cookies.get("auth-token")?.value
 
     if (!token) {
-      return null
+      return NextResponse.json(
+        { success: false, message: "Not authenticated" },
+        { status: 401 }
+      )
     }
 
     // Verify JWT token
@@ -31,25 +34,23 @@ export async function getCurrentUser(request: NextRequest) {
       }
     })
 
-    return user
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      user
+    })
+
   } catch (error) {
-    console.error("Auth error:", error)
-    return null
+    console.error("Auth check error:", error)
+    return NextResponse.json(
+      { success: false, message: "Authentication failed" },
+      { status: 401 }
+    )
   }
-}
-
-export async function requireAuth(request: NextRequest) {
-  const user = await getCurrentUser(request)
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
-  return user
-}
-
-export async function requireAdmin(request: NextRequest) {
-  const user = await getCurrentUser(request)
-  if (!user || !user.isAdmin) {
-    throw new Error("Admin access required")
-  }
-  return user
-}
+} 

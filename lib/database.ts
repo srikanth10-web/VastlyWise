@@ -28,7 +28,7 @@ const users: User[] = [
   },
 ]
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key-change-this-in-production")
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "")
 
 export async function hashPassword(password: string): Promise<string> {
   return await hash(password, 12)
