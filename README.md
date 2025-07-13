@@ -1,300 +1,220 @@
-# VastlyWise Backend API
+# VastlyWise
 
-A comprehensive backend API for the VastlyWise admin platform built with Next.js 15, Prisma, and SQLite.
+A modern Next.js application with authentication, built with Prisma, Supabase, and TypeScript.
 
 ## 🚀 Features
 
-- **Authentication & Authorization**: JWT-based authentication with role-based access control
-- **Content Management**: Full CRUD operations for posts, categories, and tags
-- **File Upload**: Secure file upload with validation and storage
-- **Analytics**: User activity tracking and reporting
-- **Notifications**: Real-time notification system
-- **Settings Management**: Application configuration management
-- **Dashboard**: Aggregated statistics and overview data
+- **Authentication**: JWT-based user registration and login
+- **Database**: Separate SQLite (local) and PostgreSQL (production) databases
+- **Modern UI**: Built with Tailwind CSS and shadcn/ui components
+- **Type Safety**: Full TypeScript support
+- **API Routes**: RESTful API endpoints for authentication
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Database**: SQLite with Prisma ORM
-- **Authentication**: JWT with HTTP-only cookies
-- **Validation**: Zod schema validation
-- **File Storage**: Local file system with organized uploads
-- **TypeScript**: Full type safety
+- **Framework**: Next.js 15
+- **Database**: SQLite (local) + PostgreSQL (production)
+- **ORM**: Prisma
+- **Authentication**: JWT with bcryptjs
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Package Manager**: pnpm
 
 ## 📋 Prerequisites
 
 - Node.js 18+ 
-- pnpm (recommended) or npm
-
-## 🔒 Security
-
-### Environment Variables
-This project uses environment variables for sensitive configuration. **Never commit your actual `.env` file to version control.**
-
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Update the values in `.env` with your actual secrets:
-   - `JWT_SECRET`: Generate a strong random string for JWT signing
-   - `DATABASE_URL`: Your database connection string
-   - `ADMIN_PASSWORD` & `USER_PASSWORD`: Passwords for seed users (development only)
-
-### Security Best Practices
-- ✅ All `.env*` files are ignored by Git
-- ✅ Database files (`*.db`) are ignored by Git
-- ✅ No hardcoded secrets in source code
-- ✅ JWT secrets use environment variables
-- ✅ Passwords are properly hashed with bcrypt
+- pnpm
+- Supabase account (for production database)
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 1. Clone and Install
 
 ```bash
+git clone <your-repo-url>
+cd VastlyWise
 pnpm install
 ```
 
 ### 2. Environment Setup
 
-Create a `.env.local` file in the root directory:
-
+#### Local Development
+Create `.env.local`:
 ```env
 DATABASE_URL="file:./dev.db"
-JWT_SECRET="your-production-secret-key-here"
+JWT_SECRET="your-super-secret-jwt-key-for-local-development-only"
 NODE_ENV="development"
 ```
 
+#### Production
+Set these environment variables in Vercel:
+- `DATABASE_URL`: Your Supabase PostgreSQL connection string
+- `JWT_SECRET`: A secure random string for JWT signing
+- `NODE_ENV`: "production"
+
 ### 3. Database Setup
 
+#### Local Development (SQLite)
 ```bash
-# Generate Prisma client
-pnpm prisma generate
+# Set up local database
+pnpm db:push
+pnpm db:seed
 
-# Push schema to database
-pnpm prisma db push
-
-# Seed database with initial data
-DATABASE_URL="file:./dev.db" npx tsx prisma/seed.ts
+# Start Prisma Studio
+pnpm db:studio
 ```
 
-### 4. Start Development Server
+#### Production (PostgreSQL)
+```bash
+# Deploy to production database
+DATABASE_URL="your-supabase-connection-string" pnpm db:production:push
+```
+
+### 4. Run Development Server
 
 ```bash
 pnpm dev
 ```
 
-The API will be available at `http://localhost:3000/api`
+Visit [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+VastlyWise/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   └── auth/          # Authentication endpoints
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── app-header.tsx    # Application header
+│   ├── app-sidebar.tsx   # Application sidebar
+│   └── ...
+├── lib/                  # Utility libraries
+│   ├── auth.ts           # Authentication utilities
+│   ├── database.ts       # Database utilities
+│   └── utils.ts          # General utilities
+├── prisma/               # Database schema and migrations
+│   ├── schema.prisma     # Local development schema (SQLite)
+│   └── schema.production.prisma # Production schema (PostgreSQL)
+└── types/                # TypeScript type definitions
+```
+
+## 🔧 Available Scripts
+
+### Database Commands
+- `pnpm db:push` - Push schema to local SQLite database
+- `pnpm db:studio` - Open Prisma Studio for local database
+- `pnpm db:seed` - Seed local database with test data
+- `pnpm db:production:push` - Push schema to production PostgreSQL database
+- `pnpm db:production:studio` - Open Prisma Studio for production database
+
+### Development Commands
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
 
 ## 🔐 Authentication
 
-### Default Users
+The application uses JWT-based authentication with the following endpoints:
 
-After seeding, you'll have these users:
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+- `POST /api/auth/logout` - User logout
 
-- **Admin**: `admin@example.com` / `admin123`
-- **User**: `user@example.com` / `user123`
+### Example Usage
 
-### Authentication Flow
-
-1. **Register**: `POST /api/auth/register`
-2. **Login**: `POST /api/auth/login`
-3. **Get Current User**: `GET /api/auth/me`
-4. **Logout**: `POST /api/auth/logout`
-
-## 📚 API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | User login |
-| GET | `/api/auth/me` | Get current user |
-| POST | `/api/auth/logout` | User logout |
-
-### Content Management
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/posts` | List posts with pagination |
-| POST | `/api/posts` | Create new post |
-| GET | `/api/posts/[id]` | Get specific post |
-| PUT | `/api/posts/[id]` | Update post |
-| DELETE | `/api/posts/[id]` | Delete post |
-
-### Categories & Tags
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/categories` | List categories |
-| POST | `/api/categories` | Create category |
-| GET | `/api/tags` | List tags |
-| POST | `/api/tags` | Create tag |
-
-### File Management
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/upload` | Upload file |
-| GET | `/api/upload` | List uploaded files |
-
-### Analytics
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/analytics` | Get analytics data |
-| POST | `/api/analytics` | Track user event |
-
-### Notifications
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/notifications` | List user notifications |
-| POST | `/api/notifications` | Create notification (admin) |
-| PATCH | `/api/notifications/[id]` | Mark as read |
-| DELETE | `/api/notifications/[id]` | Delete notification |
-
-### Settings
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/settings` | Get settings |
-| POST | `/api/settings` | Update setting (admin) |
-
-### Dashboard
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/dashboard` | Get dashboard statistics |
-
-## 🔧 Usage Examples
-
-### Creating a Post
-
-```javascript
-const response = await fetch('/api/posts', {
+```typescript
+// Register a new user
+const response = await fetch('/api/auth/register', {
   method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    title: 'My First Post',
-    content: 'This is the content of my post...',
-    slug: 'my-first-post',
-    status: 'DRAFT',
-    categoryIds: ['category-id'],
-    tagIds: ['tag-id']
+    email: 'user@example.com',
+    username: 'username',
+    password: 'password123',
+    firstName: 'John',
+    lastName: 'Doe'
   })
-})
-```
+});
 
-### Uploading a File
-
-```javascript
-const formData = new FormData()
-formData.append('file', fileInput.files[0])
-
-const response = await fetch('/api/upload', {
+// Login
+const loginResponse = await fetch('/api/auth/login', {
   method: 'POST',
-  body: formData
-})
-```
-
-### Tracking Analytics
-
-```javascript
-const response = await fetch('/api/analytics', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    page: '/dashboard',
-    action: 'view',
-    metadata: { userId: '123' }
+    email: 'user@example.com',
+    password: 'password123'
   })
-})
+});
 ```
 
 ## 🗄️ Database Schema
 
-### Core Models
+The application includes the following models:
 
 - **User**: Authentication and user management
 - **Post**: Blog posts and content
-- **Category**: Post categorization
-- **Tag**: Post tagging system
-- **Comment**: Post comments with threading
-- **FileUpload**: File management
-- **Analytics**: User activity tracking
+- **Category**: Post categories
+- **Tag**: Post tags
+- **Comment**: Post comments with nested replies
+- **FileUpload**: File upload management
+- **Analytics**: User analytics tracking
 - **Notification**: User notifications
-- **Setting**: Application configuration
+- **Setting**: Application settings
 
-### Relationships
+## 🌐 Deployment
 
-- Users can have multiple posts, comments, uploads, and notifications
-- Posts belong to users and can have multiple categories and tags
-- Comments can be threaded (parent-child relationships)
-- Analytics track user actions across the platform
+### Vercel Deployment
 
-## 🔒 Security Features
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard:
+   - `DATABASE_URL`: Your Supabase PostgreSQL connection string
+   - `JWT_SECRET`: A secure random string
+   - `NODE_ENV`: "production"
+3. Deploy
 
-- **JWT Authentication**: Secure token-based authentication
-- **HTTP-only Cookies**: XSS protection for auth tokens
-- **Input Validation**: Zod schema validation for all inputs
-- **File Upload Security**: Type and size validation
-- **Role-based Access**: Admin and user role separation
-- **SQL Injection Protection**: Prisma ORM with parameterized queries
+### Database Deployment
 
-## 📊 Analytics & Monitoring
+After setting up Vercel environment variables:
 
-The platform includes comprehensive analytics tracking:
-
-- **Page Views**: Track which pages users visit
-- **User Actions**: Monitor user interactions
-- **Content Performance**: Post and category analytics
-- **User Behavior**: Activity patterns and trends
-
-## 🚀 Deployment
-
-### Production Setup
-
-1. **Database**: Use PostgreSQL or MySQL for production
-2. **File Storage**: Use cloud storage (AWS S3, Cloudinary, etc.)
-3. **Environment Variables**: Set production JWT secret and database URL
-4. **HTTPS**: Enable SSL/TLS for secure communication
-
-### Environment Variables
-
-```env
-# Production
-DATABASE_URL="postgresql://user:password@localhost:5432/vastlywise"
-JWT_SECRET="your-production-secret-key-here"
-NODE_ENV="production"
+```bash
+# Deploy database schema to production
+DATABASE_URL="your-supabase-connection-string" pnpm db:production:push
 ```
+
+## 🔒 Security
+
+- Environment variables are properly secured
+- JWT secrets are different for local and production
+- Database credentials are not committed to version control
+- `.env*` files are ignored by git
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Test thoroughly
 5. Submit a pull request
 
-## 📝 License
+## 📄 License
 
 This project is licensed under the MIT License.
 
 ## 🆘 Support
 
-For support and questions:
+If you encounter any issues:
 
-- Create an issue in the repository
-- Check the documentation
-- Review the API examples
+1. Check the [Issues](../../issues) page
+2. Create a new issue with detailed information
+3. Include error messages and steps to reproduce
 
 ---
 
-**VastlyWise Backend API** - A powerful, scalable backend for modern admin platforms. 
+Built with ❤️ using Next.js, Prisma, and Supabase 
