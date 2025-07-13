@@ -8,7 +8,6 @@ import {
   createJWT,
   setAuthCookie,
   removeAuthCookie,
-  getCurrentUser,
 } from "./database"
 
 export interface ActionResult {
@@ -100,8 +99,4 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
 export async function logoutAction(): Promise<void> {
   await removeAuthCookie()
   redirect("/")
-}
-
-export async function getUser() {
-  return await getCurrentUser()
 }

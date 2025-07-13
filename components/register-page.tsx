@@ -33,7 +33,14 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
         if (result.errors) {
           setErrors(result.errors)
         } else {
-          setErrors({ general: result.message })
+          // Handle specific error messages
+          if (result.message.includes("email or username already exists")) {
+            setErrors({ 
+              general: "A user with this email or username already exists. Please try a different email or username." 
+            })
+          } else {
+            setErrors({ general: result.message })
+          }
         }
       }
     })
@@ -44,7 +51,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
       <div className="flex items-center justify-center min-h-[60vh]">
         <Alert className="max-w-md bg-green-50 border-green-200">
           <AlertDescription className="text-green-800 font-medium">
-            User is successfully registered. Redirecting to login...
+            ✅ Account created successfully! Redirecting to login...
           </AlertDescription>
         </Alert>
       </div>
@@ -56,7 +63,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
-          <CardDescription>Fill in the information below to create your account</CardDescription>
+          <CardDescription>Enter your information to create a new account</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
@@ -65,42 +72,43 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
               <Input
                 id="username"
                 name="username"
-                type="text"
                 className={errors.username ? "border-red-500" : ""}
                 required
               />
               {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  className={errors.firstName ? "border-red-500" : ""}
-                  required
-                />
-                {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                className={errors.firstName ? "border-red-500" : ""}
+                required
+              />
+              {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  className={errors.lastName ? "border-red-500" : ""}
-                  required
-                />
-                {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                className={errors.lastName ? "border-red-500" : ""}
+                required
+              />
+              {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" className={errors.email ? "border-red-500" : ""} required />
+              <Input 
+                id="email" 
+                name="email" 
+                type="email" 
+                className={errors.email ? "border-red-500" : ""} 
+                required 
+              />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
