@@ -6,7 +6,7 @@ import { ContentSidebar } from "@/components/content-sidebar"
 import { MainContent } from "@/components/main-content"
 import { RegisterPage } from "@/components/register-page"
 import { LoginPage } from "@/components/login-page"
-import { logoutAction } from "@/lib/actions"
+import { getUser, logoutAction } from "@/lib/actions"
 import type { User } from "@/types"
 
 export default function AdminApp() {
@@ -19,12 +19,16 @@ export default function AdminApp() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.success && data.user) {
-            setCurrentUser(data.user)
-          }
+        const user = await getUser()
+        if (user) {
+          setCurrentUser({
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            isAdmin: user.isAdmin,
+          })
         }
       } catch (error) {
         console.error("Auth check failed:", error)
@@ -44,11 +48,8 @@ export default function AdminApp() {
   const handleLogout = async () => {
     try {
       await logoutAction()
-      setCurrentUser(null)
-      setCurrentPage("home")
     } catch (error) {
-      console.error("Logout failed:", error)
-      // Fallback: clear user state and redirect
+      // Fallback if server action fails
       setCurrentUser(null)
       setCurrentPage("home")
     }

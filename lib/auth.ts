@@ -1,55 +1,52 @@
-import { NextRequest } from "next/server"
-import { jwtVerify } from "jose"
-import { prisma } from "./prisma"
+import type { User } from "@/types"
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "")
+// Mock authentication functions
+export const mockUsers: User[] = [
+  {
+    id: "1",
+    email: "admin@example.com",
+    username: "admin",
+    firstName: "Admin",
+    lastName: "User",
+    isAdmin: true,
+  },
+  {
+    id: "2",
+    email: "user@example.com",
+    username: "user",
+    firstName: "Regular",
+    lastName: "User",
+    isAdmin: false,
+  },
+]
 
-export async function getCurrentUser(request: NextRequest) {
-  try {
-    // Get token from cookie
-    const token = request.cookies.get("auth-token")?.value
-
-    if (!token) {
-      return null
-    }
-
-    // Verify JWT token
-    const { payload } = await jwtVerify(token, JWT_SECRET)
-    const userId = payload.userId as string
-
-    // Get user from database
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        isAdmin: true,
-        createdAt: true,
-      }
-    })
-
-    return user
-  } catch (error) {
-    console.error("Auth error:", error)
-    return null
+export const authenticateUser = (email: string, password: string): User | null => {
+  // Mock authentication - in real app, this would call an API
+  if (email === "admin@example.com" && password === "admin123") {
+    return mockUsers[0]
   }
+  if (email === "user@example.com" && password === "user123") {
+    return mockUsers[1]
+  }
+  return null
 }
 
-export async function requireAuth(request: NextRequest) {
-  const user = await getCurrentUser(request)
-  if (!user) {
-    throw new Error("Unauthorized")
+export const registerUser = (userData: {
+  username: string
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+}): User => {
+  // Mock registration - in real app, this would call an API
+  const newUser: User = {
+    id: Date.now().toString(),
+    email: userData.email,
+    username: userData.username,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    isAdmin: false,
   }
-  return user
-}
-
-export async function requireAdmin(request: NextRequest) {
-  const user = await getCurrentUser(request)
-  if (!user || !user.isAdmin) {
-    throw new Error("Admin access required")
-  }
-  return user
+  mockUsers.push(newUser)
+  return newUser
 }

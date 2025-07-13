@@ -25,26 +25,8 @@ export function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
       const result = await loginAction(formData)
 
       if (result.success) {
-        // Get the current user after successful login
-        try {
-          const response = await fetch('/api/auth/me')
-          if (response.ok) {
-            const userData = await response.json()
-            if (userData.success && userData.user) {
-              onLogin(userData.user)
-            } else {
-              // Fallback: reload the page to trigger auth check
-              window.location.reload()
-            }
-          } else {
-            // Fallback: reload the page to trigger auth check
-            window.location.reload()
-          }
-        } catch (error) {
-          console.error("Failed to get user data:", error)
-          // Fallback: reload the page to trigger auth check
-          window.location.reload()
-        }
+        // Refresh the page to get the updated user state
+        window.location.reload()
       } else {
         setError(result.message)
       }
@@ -91,7 +73,6 @@ export function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
               <div className="text-xs text-gray-500">
                 <p>Demo credentials:</p>
                 <p>Admin: admin@example.com / admin123</p>
-                <p>User: user@example.com / user123</p>
               </div>
             </div>
           </form>

@@ -1,7 +1,6 @@
 import { hash, compare } from "bcryptjs"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
-import { prisma } from "./prisma"
 
 export interface User {
   id: string
@@ -10,14 +9,26 @@ export interface User {
   firstName: string
   lastName: string
   isAdmin: boolean
+  passwordHash: string
   createdAt: string
 }
 
-export interface UserWithPassword extends User {
-  passwordHash: string
-}
+// In a real app, this would be a database
+// For demo purposes, we'll use a simple in-memory store
+const users: User[] = [
+  {
+    id: "1",
+    email: "admin@example.com",
+    username: "admin",
+    firstName: "Admin",
+    lastName: "User",
+    isAdmin: true,
+    passwordHash: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/VcSAg/9qm", // admin123
+    createdAt: new Date().toISOString(),
+  },
+]
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "")
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key-change-this-in-production")
 
 export async function hashPassword(password: string): Promise<string> {
   return await hash(password, 12)
@@ -35,90 +46,34 @@ export async function createUser(userData: {
   password: string
 }): Promise<User> {
   // Check if user already exists
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { email: userData.email.toLowerCase() },
-        { username: userData.username }
-      ]
-    }
-  })
-
+  const existingUser = users.find((u) => u.email === userData.email || u.username === userData.username)
   if (existingUser) {
     throw new Error("User with this email or username already exists")
   }
 
   const passwordHash = await hashPassword(userData.password)
 
-  const newUser = await prisma.user.create({
-    data: {
-      username: userData.username,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email.toLowerCase(),
-      passwordHash,
-      isAdmin: false,
-    },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      firstName: true,
-      lastName: true,
-      isAdmin: true,
-      createdAt: true,
-    }
-  })
-
-  return {
-    ...newUser,
-    createdAt: newUser.createdAt.toISOString(),
+  const newUser: User = {
+    id: Date.now().toString(),
+    email: userData.email,
+    username: userData.username,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    isAdmin: false,
+    passwordHash,
+    createdAt: new Date().toISOString(),
   }
+
+  users.push(newUser)
+  return newUser
 }
 
-export async function findUserByEmail(email: string): Promise<UserWithPassword | null> {
-  const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      firstName: true,
-      lastName: true,
-      isAdmin: true,
-      passwordHash: true,
-      createdAt: true,
-    }
-  })
-
-  if (!user) return null
-
-  return {
-    ...user,
-    createdAt: user.createdAt.toISOString(),
-  }
+export async function findUserByEmail(email: string): Promise<User | null> {
+  return users.find((u) => u.email === email) || null
 }
 
 export async function findUserById(id: string): Promise<User | null> {
-  const user = await prisma.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      firstName: true,
-      lastName: true,
-      isAdmin: true,
-      createdAt: true,
-    }
-  })
-
-  if (!user) return null
-
-  return {
-    ...user,
-    createdAt: user.createdAt.toISOString(),
-  }
+  return users.find((u) => u.id === id) || null
 }
 
 export async function createJWT(userId: string): Promise<string> {
