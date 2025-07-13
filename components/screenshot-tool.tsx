@@ -140,13 +140,15 @@ export function ScreenshotTool({ url, device, browser }: ScreenshotToolProps) {
   }
 
   return (
-    <Card>
+    <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Camera className="h-5 w-5" />
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <Camera className="h-5 w-5 text-purple-600" />
+          </div>
           Screenshot & Share
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-slate-600">
           Capture and share screenshots of your website preview
         </CardDescription>
       </CardHeader>
@@ -157,7 +159,7 @@ export function ScreenshotTool({ url, device, browser }: ScreenshotToolProps) {
             <Button 
               onClick={captureScreenshot} 
               disabled={isCapturing}
-              className="flex-1"
+              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
             >
               {isCapturing ? (
                 <>
@@ -263,7 +265,10 @@ export function ScreenshotTool({ url, device, browser }: ScreenshotToolProps) {
             </div>
           </div>
 
-          <Button onClick={shareScreenshot} className="w-full">
+          <Button 
+            onClick={shareScreenshot} 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+          >
             {getShareIcon(sharePlatform)}
             <span className="ml-2">
               Share on {sharePlatform.charAt(0).toUpperCase() + sharePlatform.slice(1)}

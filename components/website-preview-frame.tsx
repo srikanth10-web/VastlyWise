@@ -91,13 +91,13 @@ export function WebsitePreviewFrame({
   const frameStyle = getFrameDimensions()
 
   return (
-    <Card className={`${isFullscreen ? 'fixed inset-0 z-50 m-0 rounded-none' : ''}`}>
-      <CardContent className={`p-6 ${isFullscreen ? 'h-full' : ''}`}>
+    <Card className={`${isFullscreen ? 'fixed inset-0 z-50 m-0 rounded-none' : ''} border-0 shadow-xl bg-white/90 backdrop-blur-sm`}>
+      <CardContent className={`p-8 ${isFullscreen ? 'h-full' : ''}`}>
         <div className="flex justify-center">
           <div className="relative">
             {/* Device Frame */}
             <div 
-              className="relative bg-white shadow-2xl rounded-3xl border-8 border-gray-800"
+              className="relative bg-white shadow-2xl rounded-3xl border-8 border-slate-800"
               style={{
                 width: frameStyle.width,
                 height: frameStyle.height,
@@ -107,19 +107,19 @@ export function WebsitePreviewFrame({
             >
               {/* Browser Header */}
               <div 
-                className="absolute top-0 left-0 right-0 h-8 bg-gray-800 rounded-t-2xl flex items-center justify-between px-3 z-10"
+                className="absolute top-0 left-0 right-0 h-10 bg-slate-800 rounded-t-2xl flex items-center justify-between px-4 z-10"
                 style={{ backgroundColor: browser.color }}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-sm"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500 shadow-sm"></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge className="bg-white/20 text-white border-0 text-xs font-medium">
                     {browser.name}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-white/10 border-white/20 text-white">
                     {device.name}
                   </Badge>
                 </div>
@@ -134,22 +134,24 @@ export function WebsitePreviewFrame({
                 }}
               >
                 {isLoading && (
-                  <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-20">
-                    <div className="text-center space-y-2">
-                      <Loader2 className="h-8 w-8 mx-auto animate-spin text-gray-400" />
-                      <p className="text-sm text-gray-500">Loading website...</p>
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center z-20">
+                    <div className="text-center space-y-3">
+                      <div className="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                        <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                      </div>
+                      <p className="text-sm text-slate-600 font-medium">Loading website...</p>
                     </div>
                   </div>
                 )}
 
                 {hasError && (
-                  <div className="absolute inset-0 bg-red-50 flex items-center justify-center z-20">
-                    <div className="text-center space-y-2">
-                      <div className="w-8 h-8 mx-auto bg-red-100 rounded-full flex items-center justify-center">
-                        <span className="text-red-500 text-sm">!</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center z-20">
+                    <div className="text-center space-y-3">
+                      <div className="w-12 h-12 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                        <span className="text-red-600 text-lg font-bold">!</span>
                       </div>
-                      <p className="text-sm text-red-600">Failed to load website</p>
-                      <Button size="sm" onClick={handleRefresh}>
+                      <p className="text-sm text-red-700 font-medium">Failed to load website</p>
+                      <Button size="sm" onClick={handleRefresh} className="bg-red-600 hover:bg-red-700">
                         Try Again
                       </Button>
                     </div>
@@ -170,26 +172,26 @@ export function WebsitePreviewFrame({
 
             {/* Device Info */}
             {!isFullscreen && (
-              <div className="mt-4 text-center space-y-2">
-                <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                  <span>{device.width} × {device.height}</span>
-                  <span>•</span>
+              <div className="mt-6 text-center space-y-4">
+                <div className="flex items-center justify-center gap-4 text-sm text-slate-600 bg-slate-50 px-4 py-2 rounded-lg">
+                  <span className="font-medium">{device.width} × {device.height}</span>
+                  <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                   <span>{device.os}</span>
-                  <span>•</span>
+                  <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                   <span>{browser.name}</span>
                 </div>
                 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-center gap-2">
-                  <Button variant="outline" size="sm" onClick={handleRefresh}>
+                <div className="flex items-center justify-center gap-3">
+                  <Button variant="outline" size="sm" onClick={handleRefresh} className="border-slate-200 hover:bg-slate-50">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Refresh
                   </Button>
-                  <Button variant="outline" size="sm" onClick={openInNewTab}>
+                  <Button variant="outline" size="sm" onClick={openInNewTab} className="border-slate-200 hover:bg-slate-50">
                     <ExternalLink className="mr-2 h-4 w-4" />
                     Open
                   </Button>
-                  <Button variant="outline" size="sm" onClick={toggleFullscreen}>
+                  <Button variant="outline" size="sm" onClick={toggleFullscreen} className="border-slate-200 hover:bg-slate-50">
                     {isFullscreen ? (
                       <>
                         <Minimize2 className="mr-2 h-4 w-4" />

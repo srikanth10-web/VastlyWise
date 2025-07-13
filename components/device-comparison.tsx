@@ -101,25 +101,31 @@ export function DeviceComparison({ url, devices, browsers, onRefresh }: DeviceCo
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Device Comparison</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            Device Comparison
+          </h2>
+          <p className="text-slate-600 mt-2">
             Compare how your website looks across different devices and browsers
           </p>
         </div>
-        <Button onClick={addDevice} disabled={comparisonDevices.length >= 4}>
+        <Button 
+          onClick={addDevice} 
+          disabled={comparisonDevices.length >= 4}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Device
         </Button>
       </div>
 
       {/* Device Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {comparisonDevices.map((comparisonDevice) => (
-          <Card key={comparisonDevice.id} className="relative">
+          <Card key={comparisonDevice.id} className="relative border-0 shadow-xl bg-white/90 backdrop-blur-sm">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -199,19 +205,22 @@ export function DeviceComparison({ url, devices, browsers, onRefresh }: DeviceCo
 
       {/* Empty State */}
       {comparisonDevices.length === 0 && (
-        <Card>
-          <CardContent className="p-12">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
-                <Monitor className="h-8 w-8 text-muted-foreground" />
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+          <CardContent className="p-16">
+            <div className="text-center space-y-6">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
+                <Monitor className="h-10 w-10 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold">No Devices Added</h3>
-                <p className="text-muted-foreground">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-slate-900">No Devices Added</h3>
+                <p className="text-slate-600">
                   Add devices to start comparing website previews
                 </p>
               </div>
-              <Button onClick={addDevice}>
+              <Button 
+                onClick={addDevice}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add First Device
               </Button>
