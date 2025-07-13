@@ -130,6 +130,7 @@ const menuItems: MenuItem[] = [
     title: "Tools & Utilities",
     href: "tools",
     children: [
+      { id: "website-preview", title: "Website Preview Tool", href: "website-preview" },
       { id: "backup", title: "Backup & Restore", href: "tools-backup" },
       { id: "import-export", title: "Import/Export", href: "tools-import" },
       { id: "database", title: "Database Tools", href: "tools-database" },
