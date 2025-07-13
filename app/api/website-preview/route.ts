@@ -217,15 +217,7 @@ function extractMetadata(html: string, baseUrl: string) {
 }
 
 function generatePreviewUrl(url: string, device: any, browser: any) {
-  // In a real implementation, this would generate a URL for a screenshot service
-  // For now, we'll return the original URL with device info
-  const params = new URLSearchParams({
-    url,
-    device: device.name,
-    width: device.width.toString(),
-    height: device.height.toString(),
-    browser: browser.name
-  })
-  
-  return `/api/website-screenshot?${params.toString()}`
+  // Return the original URL since we're using iframe preview, not screenshot service
+  // In a real implementation with screenshot service, this would generate a screenshot URL
+  return url
 } 
