@@ -1,11 +1,11 @@
 # VastlyWise
 
-A modern Next.js application with authentication, built with Prisma, Supabase, and TypeScript.
+A modern Next.js application with authentication, built with Prisma, SQLite, and TypeScript.
 
 ## 🚀 Features
 
 - **Authentication**: JWT-based user registration and login
-- **Database**: Separate SQLite (local) and PostgreSQL (production) databases
+- **Database**: SQLite database for local development
 - **Modern UI**: Built with Tailwind CSS and shadcn/ui components
 - **Type Safety**: Full TypeScript support
 - **API Routes**: RESTful API endpoints for authentication
@@ -13,7 +13,7 @@ A modern Next.js application with authentication, built with Prisma, Supabase, a
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 15
-- **Database**: SQLite (local) + PostgreSQL (production)
+- **Database**: SQLite
 - **ORM**: Prisma
 - **Authentication**: JWT with bcryptjs
 - **Styling**: Tailwind CSS
@@ -24,7 +24,6 @@ A modern Next.js application with authentication, built with Prisma, Supabase, a
 
 - Node.js 18+ 
 - pnpm
-- Supabase account (for production database)
 
 ## 🚀 Quick Start
 
@@ -38,7 +37,6 @@ pnpm install
 
 ### 2. Environment Setup
 
-#### Local Development
 Create `.env.local`:
 ```env
 DATABASE_URL="file:./dev.db"
@@ -46,15 +44,8 @@ JWT_SECRET="your-super-secret-jwt-key-for-local-development-only"
 NODE_ENV="development"
 ```
 
-#### Production
-Set these environment variables in Vercel:
-- `DATABASE_URL`: Your Supabase PostgreSQL connection string
-- `JWT_SECRET`: A secure random string for JWT signing
-- `NODE_ENV`: "production"
-
 ### 3. Database Setup
 
-#### Local Development (SQLite)
 ```bash
 # Set up local database
 pnpm db:push
@@ -62,12 +53,6 @@ pnpm db:seed
 
 # Start Prisma Studio
 pnpm db:studio
-```
-
-#### Production (PostgreSQL)
-```bash
-# Deploy to production database
-DATABASE_URL="your-supabase-connection-string" pnpm db:production:push
 ```
 
 ### 4. Run Development Server
@@ -98,19 +83,17 @@ VastlyWise/
 │   ├── database.ts       # Database utilities
 │   └── utils.ts          # General utilities
 ├── prisma/               # Database schema and migrations
-│   ├── schema.prisma     # Local development schema (SQLite)
-│   └── schema.production.prisma # Production schema (PostgreSQL)
+│   └── schema.prisma     # Database schema (SQLite)
 └── types/                # TypeScript type definitions
 ```
 
 ## 🔧 Available Scripts
 
 ### Database Commands
-- `pnpm db:push` - Push schema to local SQLite database
-- `pnpm db:studio` - Open Prisma Studio for local database
-- `pnpm db:seed` - Seed local database with test data
-- `pnpm db:production:push` - Push schema to production PostgreSQL database
-- `pnpm db:production:studio` - Open Prisma Studio for production database
+- `pnpm db:push` - Push schema to SQLite database
+- `pnpm db:studio` - Open Prisma Studio for database
+- `pnpm db:seed` - Seed database with test data
+- `pnpm db:reset` - Reset database
 
 ### Development Commands
 - `pnpm dev` - Start development server
@@ -174,19 +157,10 @@ The application includes the following models:
 
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard:
-   - `DATABASE_URL`: Your Supabase PostgreSQL connection string
+   - `DATABASE_URL`: Your database connection string
    - `JWT_SECRET`: A secure random string
    - `NODE_ENV`: "production"
 3. Deploy
-
-### Database Deployment
-
-After setting up Vercel environment variables:
-
-```bash
-# Deploy database schema to production
-DATABASE_URL="your-supabase-connection-string" pnpm db:production:push
-```
 
 ## 🔒 Security
 
@@ -217,4 +191,4 @@ If you encounter any issues:
 
 ---
 
-Built with ❤️ using Next.js, Prisma, and Supabase 
+Built with ❤️ using Next.js, Prisma, and SQLite 

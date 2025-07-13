@@ -12,11 +12,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
-    "db:reset": "prisma migrate reset",
-    "db:deploy": "prisma deploy",
-    "db:production:generate": "prisma generate --schema=./prisma/schema.production.prisma",
-    "db:production:push": "prisma db push --schema=./prisma/schema.production.prisma",
-    "db:production:studio": "prisma studio --schema=./prisma/schema.production.prisma"
+    "db:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
