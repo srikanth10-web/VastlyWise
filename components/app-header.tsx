@@ -4,13 +4,28 @@ import { Button } from "@/components/ui/button"
 import { IndustriesMegaMenu } from "./industries-mega-menu"
 import type { User } from "@/types"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { toast } from "@/components/ui/use-toast"
 
 interface AppHeaderProps {
   logoUrl: string
-  currentUser: User | null
+  currentUser?: User | null
 }
 
-export function AppHeader({ logoUrl, currentUser }: AppHeaderProps) {
+export function AppHeader({ logoUrl, currentUser = null }: AppHeaderProps) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully.",
+    });
+    setTimeout(() => {
+      router.push("/login");
+    }, 1200);
+  };
+
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm relative z-40">
       <div className="flex items-center space-x-8">
@@ -50,7 +65,9 @@ export function AppHeader({ logoUrl, currentUser }: AppHeaderProps) {
         {currentUser ? (
           <div className="flex items-center space-x-3">
             <span className="text-sm text-gray-600">Welcome, {currentUser.firstName}</span>
-            {/* Logout button can be added here if needed in the future */}
+            <Button variant="outline" onClick={handleLogout} className="border-red-500 text-red-600 hover:bg-red-50">
+              Logout
+            </Button>
           </div>
         ) : (
           <>

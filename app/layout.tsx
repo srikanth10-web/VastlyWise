@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { AppHeader } from '@/components/app-header'
+// import { AppHeader } from '@/components/app-header'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -16,11 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppHeader
-          logoUrl="/placeholder-logo.png"
-          currentUser={null}
-        />
+        {/* <AppHeader logoUrl="/placeholder-logo.png" currentUser={null} /> */}
         {children}
+        <Toaster />
       </body>
     </html>
   )

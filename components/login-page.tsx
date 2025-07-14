@@ -26,8 +26,9 @@ export function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
       const result = await loginAction(formData)
 
       if (result.success) {
-        // Refresh the page to get the updated user state
-        window.location.reload()
+        if (result.user) {
+          onLogin(result.user)
+        }
       } else {
         setError(result.message)
       }

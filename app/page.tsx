@@ -5,6 +5,7 @@ import { ContentSidebar } from "@/components/content-sidebar"
 import { MainContent } from "@/components/main-content"
 import { RegisterPage } from "@/components/register-page"
 import { LoginPage } from "@/components/login-page"
+import { AppHeader } from "@/components/app-header"
 import { getUser, logoutAction } from "@/lib/actions"
 import type { User } from "@/types"
 
@@ -104,6 +105,7 @@ export default function AdminApp() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
+      <AppHeader logoUrl={logoUrl || "/placeholder-logo.png"} currentUser={currentUser} onLogout={handleLogout} />
       {/* Main Layout with Sidebar */}
       <div className="flex">
         {/* Content Sidebar */}
