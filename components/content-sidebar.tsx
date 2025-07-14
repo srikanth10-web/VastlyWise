@@ -15,6 +15,7 @@ export function ContentSidebar({ currentUser, onNavigate }: ContentSidebarProps)
     { id: "project3", name: "Project 3", description: "Third project description" },
     { id: "project4", name: "Project 4", description: "Fourth project description" },
     { id: "project5", name: "Project 5", description: "Fifth project description" },
+    { id: "project6", name: "Project 6", description: "Add blog content" },
   ]
 
   return (

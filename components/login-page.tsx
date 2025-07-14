@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { loginAction } from "@/lib/actions"
 import type { User } from "@/types"
+import Link from "next/link"
 
 interface LoginPageProps {
   onLogin: (user: User) => void
@@ -63,17 +64,9 @@ export function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
             </Button>
 
             <div className="text-center space-y-2">
-              <button
-                type="button"
-                onClick={() => onNavigate("register")}
-                className="text-sm text-blue-500 hover:text-blue-600"
-              >
+              <Link href="/register" className="text-sm text-blue-500 hover:text-blue-600">
                 {"Don't have an account? Register here"}
-              </button>
-              <div className="text-xs text-gray-500">
-                <p>Demo credentials:</p>
-                <p>Admin: admin@example.com / admin123</p>
-              </div>
+              </Link>
             </div>
           </form>
         </CardContent>

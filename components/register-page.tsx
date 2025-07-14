@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { registerAction } from "@/lib/actions"
+import Link from "next/link"
 
 interface RegisterPageProps {
   onNavigate: (page: string) => void
@@ -139,13 +140,9 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
             </Button>
 
             <div className="text-center">
-              <button
-                type="button"
-                onClick={() => onNavigate("login")}
-                className="text-sm text-blue-500 hover:text-blue-600"
-              >
+              <Link href="/login" className="text-sm text-blue-500 hover:text-blue-600">
                 Already have an account? Login here
-              </button>
+              </Link>
             </div>
           </form>
         </CardContent>

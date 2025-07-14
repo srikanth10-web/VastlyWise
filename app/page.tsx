@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AppHeader } from "@/components/app-header"
 import { ContentSidebar } from "@/components/content-sidebar"
 import { MainContent } from "@/components/main-content"
 import { RegisterPage } from "@/components/register-page"
@@ -78,7 +77,6 @@ export default function AdminApp() {
   if (currentPage === "register") {
     return (
       <div className="min-h-screen bg-gray-50">
-        <AppHeader logoUrl={logoUrl} currentUser={currentUser} onNavigate={handleNavigate} onLogout={handleLogout} />
         <RegisterPage onNavigate={handleNavigate} />
         <footer className="bg-white border-t border-gray-200 py-6 mt-auto">
           <div className="max-w-7xl mx-auto px-6">
@@ -92,7 +90,6 @@ export default function AdminApp() {
   if (currentPage === "login") {
     return (
       <div className="min-h-screen bg-gray-50">
-        <AppHeader logoUrl={logoUrl} currentUser={currentUser} onNavigate={handleNavigate} onLogout={handleLogout} />
         <LoginPage onLogin={handleLogin} onNavigate={handleNavigate} />
         <footer className="bg-white border-t border-gray-200 py-6 mt-auto">
           <div className="max-w-7xl mx-auto px-6">
@@ -107,8 +104,6 @@ export default function AdminApp() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <AppHeader logoUrl={logoUrl} currentUser={currentUser} onNavigate={handleNavigate} onLogout={handleLogout} />
-
       {/* Main Layout with Sidebar */}
       <div className="flex">
         {/* Content Sidebar */}

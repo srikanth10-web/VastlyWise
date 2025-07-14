@@ -12,13 +12,15 @@ import {
   ShoppingBag,
   Briefcase,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface IndustriesMenuProps {
   onNavigate: (page: string) => void
 }
 
-export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
+export function IndustriesMegaMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   const industries = [
     {
@@ -123,7 +125,7 @@ export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button
         className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium transition-colors"
-        onClick={() => onNavigate("industries")}
+        onClick={() => router.push("/industries")}
       >
         <span>Industries</span>
         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
@@ -147,7 +149,7 @@ export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
                         <li key={item.name}>
                           <button
                             onClick={() => {
-                              onNavigate(item.href)
+                              router.push(`/${item.href}`)
                               setIsOpen(false)
                             }}
                             className="text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors duration-150 w-full text-left"
@@ -170,7 +172,7 @@ export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
                   <p className="text-sm text-blue-700">Discover tailored solutions for your specific industry needs.</p>
                   <button
                     onClick={() => {
-                      onNavigate("industry-solutions")
+                      router.push("/industry-solutions")
                       setIsOpen(false)
                     }}
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium mt-2"
@@ -185,7 +187,7 @@ export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
                   </p>
                   <button
                     onClick={() => {
-                      onNavigate("case-studies")
+                      router.push("/case-studies")
                       setIsOpen(false)
                     }}
                     className="text-sm text-green-600 hover:text-green-800 font-medium mt-2"
@@ -198,7 +200,7 @@ export function IndustriesMegaMenu({ onNavigate }: IndustriesMenuProps) {
                   <p className="text-sm text-purple-700">Stay updated with the latest trends and insights.</p>
                   <button
                     onClick={() => {
-                      onNavigate("industry-insights")
+                      router.push("/industry-insights")
                       setIsOpen(false)
                     }}
                     className="text-sm text-purple-600 hover:text-purple-800 font-medium mt-2"

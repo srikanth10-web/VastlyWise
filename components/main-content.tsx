@@ -4,6 +4,7 @@ import type { User } from "@/types"
 import { LogoUpload } from "./logo-upload"
 import { onNavigate } from "@/utils/navigation" // Declare or import the onNavigate function
 import { Calendar, CalendarDays } from "lucide-react"
+import React, { useState } from "react"
 
 interface MainContentProps {
   currentPage: string
@@ -813,14 +814,156 @@ export function MainContent({ currentPage, currentUser, logoUrl, onLogoUpdate }:
           </div>
         )
 
-      case "project2":
+      case "project2": {
+        // React state for code and output
+        const [algo1Code, setAlgo1Code] = useState(`// Simple CPU intensive example
+let result = 0;
+for (let i = 0; i < 100000; i++) {
+  result += Math.sqrt(i);
+}
+console.log("Calculated", result.toFixed(2));
+"CPU task completed"
+`);
+        const [algo2Code, setAlgo2Code] = useState(`// Simple memory intensive example  
+const largeArray = [];
+for (let i = 0; i < 50000; i++) {
+  largeArray.push({ id: i, value: Math.random() });
+}
+console.log("Created array with", largeArray.length, "items");
+"Memory task completed"
+`);
+        const [algo1Output, setAlgo1Output] = useState("Ready to execute Algorithm 1...");
+        const [algo2Output, setAlgo2Output] = useState("Ready to execute Algorithm 2...");
+        const [isRunning, setIsRunning] = useState(false);
+        const [metricsOutput, setMetricsOutput] = useState("");
+
+        // Helper to estimate memory usage (very rough, only for arrays of numbers/objects)
+        function estimateMemoryUsage(obj: any): number {
+          if (Array.isArray(obj)) {
+            if (obj.length === 0) return 0;
+            if (typeof obj[0] === "number") return obj.length * 8; // 8 bytes per number
+            if (typeof obj[0] === "object") return obj.length * 64; // rough estimate
+            return obj.length * 16; // fallback
+          }
+          if (typeof obj === "object" && obj !== null) return 128; // rough for objects
+          return 0;
+        }
+
+        // Helper to run code safely and measure metrics
+        const runCode = (code: string, setOutput: (out: string) => void, algoNum: number) => {
+          setIsRunning(true);
+          setOutput("Executing algorithm...\n");
+          setMetricsOutput("");
+          setTimeout(() => {
+            let output = "";
+            let metrics = "";
+            try {
+              // Capture console.log
+              const logs: string[] = [];
+              const originalConsoleLog = console.log;
+              (console as any).log = (...args: any[]) => {
+                logs.push(args.map(String).join(" "));
+              };
+              // Measure execution time
+              const start = performance.now();
+              let result;
+              try {
+                // eslint-disable-next-line no-new-func
+                const func = new Function(code);
+                result = func();
+              } catch (err: any) {
+                logs.push("Execution Error: " + err.message);
+              }
+              const end = performance.now();
+              (console as any).log = originalConsoleLog;
+              output = logs.join("\n");
+              if (result !== undefined) {
+                output += `\nReturn value: ${JSON.stringify(result)}`;
+              }
+              output += "\nExecution completed successfully.";
+              // Estimate memory usage if result is array/object
+              let memory = estimateMemoryUsage(result);
+              metrics = `CPU (Execution Time): ${(end - start).toFixed(2)} ms\nEstimated Memory Usage: ${memory} bytes`;
+            } catch (err: any) {
+              output = "Runtime Error: " + err.message;
+              metrics = "CPU (Execution Time): N/A\nEstimated Memory Usage: N/A";
+            }
+            setOutput(output);
+            setMetricsOutput(metrics);
+            setIsRunning(false);
+          }, 800);
+        };
+
+        // Run both algorithms sequentially and combine outputs/metrics
+        const runBoth = () => {
+          setIsRunning(true);
+          setAlgo1Output("Executing algorithm...\n");
+          setAlgo2Output("Executing algorithm...\n");
+          setMetricsOutput("");
+          setTimeout(() => {
+            let output1 = "";
+            let output2 = "";
+            let metrics1 = { time: 0, memory: 0, text: "" };
+            let metrics2 = { time: 0, memory: 0, text: "" };
+            // Helper to run and measure
+            const runWithMetrics = (code: string) => {
+              let output = "";
+              let time = 0;
+              let memory = 0;
+              try {
+                const logs: string[] = [];
+                const originalConsoleLog = console.log;
+                (console as any).log = (...args: any[]) => {
+                  logs.push(args.map(String).join(" "));
+                };
+                const start = performance.now();
+                let result;
+                try {
+                  // eslint-disable-next-line no-new-func
+                  const func = new Function(code);
+                  result = func();
+                } catch (err: any) {
+                  logs.push("Execution Error: " + err.message);
+                }
+                const end = performance.now();
+                (console as any).log = originalConsoleLog;
+                output = logs.join("\n");
+                if (result !== undefined) {
+                  output += `\nReturn value: ${JSON.stringify(result)}`;
+                }
+                output += "\nExecution completed successfully.";
+                time = end - start;
+                memory = estimateMemoryUsage(result);
+              } catch (err: any) {
+                output = "Runtime Error: " + err.message;
+                time = 0;
+                memory = 0;
+              }
+              return { output, time, memory };
+            };
+            // Run Algorithm 1
+            const res1 = runWithMetrics(algo1Code);
+            setAlgo1Output(res1.output);
+            metrics1 = { time: res1.time, memory: res1.memory, text: `CPU (Execution Time): ${res1.time.toFixed(2)} ms\nEstimated Memory Usage: ${res1.memory} bytes` };
+            // Run Algorithm 2
+            const res2 = runWithMetrics(algo2Code);
+            setAlgo2Output(res2.output);
+            metrics2 = { time: res2.time, memory: res2.memory, text: `CPU (Execution Time): ${res2.time.toFixed(2)} ms\nEstimated Memory Usage: ${res2.memory} bytes` };
+            // Combine outputs
+            setMetricsOutput(
+              `Algorithm 1:\n${metrics1.text}\n---\nAlgorithm 2:\n${metrics2.text}\n===\nTotal CPU (Execution Time): ${(metrics1.time + metrics2.time).toFixed(2)} ms\nTotal Estimated Memory Usage: ${metrics1.memory + metrics2.memory} bytes`
+            );
+            setIsRunning(false);
+          }, 200);
+        };
+
         return (
           <div className="space-y-6">
             <h1 className="text-3xl font-bold text-gray-900">Algorithm Code Runner</h1>
             <p className="text-lg text-gray-600">
-              Enter your algorithm code and execute them to monitor system performance.
+              Enter your algorithm code and execute them to monitor system performance.<br />
+              <span className="text-sm text-red-600 font-medium">Note: This will work only for JavaScript code.</span>
             </p>
-
             {/* Algorithm Input Areas */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Algorithm 1 */}
@@ -835,24 +978,12 @@ export function MainContent({ currentPage, currentUser, logoUrl, onLogoUpdate }:
                 </div>
                 <div className="p-4">
                   <textarea
-                    id="algorithm1Code"
-                    placeholder={`// Simple CPU intensive example
-let result = 0;
-for (let i = 0; i < 100000; i++) {
-  result += Math.sqrt(i);
-}
-console.log("Calculated", result.toFixed(2));
-"CPU task completed"
-`}
+                    value={algo1Code}
+                    onChange={e => setAlgo1Code(e.target.value)}
                     className="w-full h-48 px-3 py-2 font-mono text-sm bg-gray-900 text-green-400 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    style={{
-                      fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
-                      lineHeight: "1.5",
-                      tabSize: "2",
-                    }}
+                    style={{ fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace', lineHeight: "1.5", tabSize: 2 }}
                   />
                 </div>
-
                 {/* Algorithm 1 Output */}
                 <div className="border-t border-gray-200">
                   <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
@@ -860,16 +991,14 @@ console.log("Calculated", result.toFixed(2));
                   </div>
                   <div className="p-4">
                     <div
-                      id="algorithm1Output"
                       className="min-h-32 p-3 bg-gray-900 text-green-400 font-mono text-sm rounded border border-2 border-gray-600 overflow-auto"
                       style={{ fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace' }}
                     >
-                      <div className="text-gray-500">Ready to execute Algorithm 1...</div>
+                      {algo1Output.split("\n").map((line, i) => <div key={i}>{line}</div>)}
                     </div>
                   </div>
                 </div>
               </div>
-
               {/* Algorithm 2 */}
               <div className="bg-white rounded-lg border shadow-sm">
                 <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
@@ -882,24 +1011,12 @@ console.log("Calculated", result.toFixed(2));
                 </div>
                 <div className="p-4">
                   <textarea
-                    id="algorithm2Code"
-                    placeholder={`// Simple memory intensive example  
-const largeArray = [];
-for (let i = 0; i < 50000; i++) {
-  largeArray.push({ id: i, value: Math.random() });
-}
-console.log("Created array with", largeArray.length, "items");
-"Memory task completed"
-`}
+                    value={algo2Code}
+                    onChange={e => setAlgo2Code(e.target.value)}
                     className="w-full h-48 px-3 py-2 font-mono text-sm bg-gray-900 text-green-400 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                    style={{
-                      fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
-                      lineHeight: "1.5",
-                      tabSize: "2",
-                    }}
+                    style={{ fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace', lineHeight: "1.5", tabSize: 2 }}
                   />
                 </div>
-
                 {/* Algorithm 2 Output */}
                 <div className="border-t border-gray-200">
                   <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
@@ -907,57 +1024,41 @@ console.log("Created array with", largeArray.length, "items");
                   </div>
                   <div className="p-4">
                     <div
-                      id="algorithm2Output"
                       className="min-h-32 p-3 bg-gray-900 text-green-400 font-mono text-sm rounded border border-2 border-gray-600 overflow-auto"
                       style={{ fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace' }}
                     >
-                      <div className="text-gray-500">Ready to execute Algorithm 2...</div>
+                      {algo2Output.split("\n").map((line, i) => <div key={i}>{line}</div>)}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
             {/* Control Buttons */}
             <div className="flex flex-wrap gap-4 justify-center">
               <button
-                id="runAlgo1Btn"
-                onClick={() => {
-                  if (typeof window !== "undefined" && window.runAlgorithmCode) {
-                    window.runAlgorithmCode(1)
-                  }
-                }}
+                onClick={() => runCode(algo1Code, setAlgo1Output, 1)}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center space-x-2"
+                disabled={isRunning}
               >
                 <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
                   <span className="text-blue-600 font-bold text-sm">1</span>
                 </div>
                 <span>Run Algorithm 1</span>
               </button>
-
               <button
-                id="runAlgo2Btn"
-                onClick={() => {
-                  if (typeof window !== "undefined" && window.runAlgorithmCode) {
-                    window.runAlgorithmCode(2)
-                  }
-                }}
+                onClick={() => runCode(algo2Code, setAlgo2Output, 2)}
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center space-x-2"
+                disabled={isRunning}
               >
                 <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
                   <span className="text-green-600 font-bold text-sm">2</span>
                 </div>
                 <span>Run Algorithm 2</span>
               </button>
-
               <button
-                id="runBothBtn"
-                onClick={() => {
-                  if (typeof window !== "undefined" && window.runBothAlgorithmCodes) {
-                    window.runBothAlgorithmCodes()
-                  }
-                }}
+                onClick={runBoth}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center space-x-2"
+                disabled={isRunning}
               >
                 <div className="flex space-x-1">
                   <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
@@ -970,444 +1071,18 @@ console.log("Created array with", largeArray.length, "items");
                 <span>Run Both Algorithms</span>
               </button>
             </div>
-
-            {/* System Performance Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* CPU Usage Card */}
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                      <span className="text-blue-600 font-bold">⚡</span>
-                    </div>
-                    CPU Usage
-                  </h3>
-                  <span id="cpuPercentageCode" className="text-2xl font-bold text-blue-600">
-                    0%
-                  </span>
-                </div>
-
-                {/* CPU Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
-                  <div
-                    id="cpuBarCode"
-                    className="bg-gradient-to-r from-blue-400 to-blue-600 h-4 rounded-full transition-all duration-300 ease-out"
-                    style={{ width: "0%" }}
-                  ></div>
-                </div>
-
-                {/* CPU Details */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="text-blue-600 font-medium">Current Load</div>
-                    <div id="cpuLoadCode" className="text-gray-900 font-semibold">
-                      Idle
-                    </div>
-                  </div>
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="text-blue-600 font-medium">Peak Usage</div>
-                    <div id="cpuPeakCode" className="text-gray-900 font-semibold">
-                      0%
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Memory Usage Card */}
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                      <span className="text-green-600 font-bold">🧠</span>
-                    </div>
-                    Memory Usage
-                  </h3>
-                  <span id="memoryPercentageCode" className="text-2xl font-bold text-green-600">
-                    0%
-                  </span>
-                </div>
-
-                {/* Memory Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
-                  <div
-                    id="memoryBarCode"
-                    className="bg-gradient-to-r from-green-400 to-green-600 h-4 rounded-full transition-all duration-300 ease-out"
-                    style={{ width: "0%" }}
-                  ></div>
-                </div>
-
-                {/* Memory Details */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="text-green-600 font-medium">Used Memory</div>
-                    <div id="memoryUsedCode" className="text-gray-900 font-semibold">
-                      0 MB
-                    </div>
-                  </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="text-green-600 font-medium">Available</div>
-                    <div id="memoryAvailableCode" className="text-gray-900 font-semibold">
-                      8192 MB
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Output Metrics */}
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">CPU & Memory Usage</label>
+              <textarea
+                className="w-full border border-gray-300 rounded px-3 py-2 font-mono text-sm bg-gray-100 text-gray-800 min-h-20"
+                value={metricsOutput}
+                readOnly
+              />
             </div>
-
-            {/* Execution History */}
-            <div className="bg-white p-6 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-gray-600 font-bold">📊</span>
-                </div>
-                Execution History
-              </h3>
-              <div id="executionHistoryCode" className="space-y-2 max-h-64 overflow-y-auto">
-                <div className="text-gray-500 text-sm italic">
-                  No algorithms have been executed yet. Enter your code and click a run button to start.
-                </div>
-              </div>
-            </div>
-
-            {/* Performance Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-                <div className="text-blue-600 font-medium text-sm">Total Executions</div>
-                <div id="totalExecutionsCode" className="text-2xl font-bold text-blue-800">
-                  0
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                <div className="text-green-600 font-medium text-sm">Avg Execution Time</div>
-                <div id="avgExecutionTimeCode" className="text-2xl font-bold text-green-800">
-                  0ms
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
-                <div className="text-purple-600 font-medium text-sm">Success Rate</div>
-                <div id="successRateCode" className="text-2xl font-bold text-purple-800">
-                  100%
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
-                <div className="text-orange-600 font-medium text-sm">Errors</div>
-                <div id="errorCountCode" className="text-2xl font-bold text-orange-800">
-                  0
-                </div>
-              </div>
-            </div>
-
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-    (function() {
-      let isRunningCode = false;
-      let currentCpuCode = 0;
-      let currentMemoryCode = 0;
-      let peakCpuCode = 0;
-      let totalExecutionsCode = 0;
-      let totalExecutionTimeCode = 0;
-      let successfulExecutionsCode = 0;
-      let errorCountCode = 0;
-      let executionHistoryCountCode = 0;
-
-      function updateResourceDisplayCode() {
-        // Update CPU
-        const cpuPercentage = document.getElementById('cpuPercentageCode');
-        const cpuBar = document.getElementById('cpuBarCode');
-        const cpuLoad = document.getElementById('cpuLoadCode');
-        const cpuPeak = document.getElementById('cpuPeakCode');
-        
-        if (cpuPercentage) cpuPercentage.textContent = currentCpuCode + '%';
-        if (cpuBar) cpuBar.style.width = currentCpuCode + '%';
-        if (cpuLoad) cpuLoad.textContent = currentCpuCode > 70 ? 'High' : currentCpuCode > 30 ? 'Medium' : 'Low';
-        
-        // Update Memory
-        const memoryPercentage = document.getElementById('memoryPercentageCode');
-        const memoryBar = document.getElementById('memoryBarCode');
-        const memoryUsed = document.getElementById('memoryUsedCode');
-        const memoryAvailable = document.getElementById('memoryAvailableCode');
-        
-        if (memoryPercentage) memoryPercentage.textContent = currentMemoryCode + '%';
-        if (memoryBar) memoryBar.style.width = currentMemoryCode + '%';
-        
-        const usedMemory = Math.round((currentMemoryCode / 100) * 8192);
-        const availableMemory = 8192 - usedMemory;
-        if (memoryUsed) memoryUsed.textContent = usedMemory + ' MB';
-        if (memoryAvailable) memoryAvailable.textContent = availableMemory + ' MB';
-        
-        // Update peak CPU
-        if (currentCpuCode > peakCpuCode) {
-          peakCpuCode = currentCpuCode;
-          if (cpuPeak) cpuPeak.textContent = peakCpuCode + '%';
-        }
-      }
-
-      function addToExecutionHistory(message, type = 'info', algorithmId = null) {
-        const history = document.getElementById('executionHistoryCode');
-        if (!history) return;
-        
-        const timestamp = new Date().toLocaleTimeString();
-        const colors = {
-          info: 'text-blue-600',
-          success: 'text-green-600',
-          warning: 'text-orange-600',
-          error: 'text-red-600'
-        };
-        
-        const historyEntry = document.createElement('div');
-        historyEntry.className = 'flex items-center space-x-2 text-sm p-3 bg-gray-50 rounded border-l-4 border-' + (type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'blue') + '-400';
-        
-        const algorithmBadge = algorithmId ? \`<span class="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">Algo \${algorithmId}</span>\` : '';
-        
-        historyEntry.innerHTML = \`
-          <span class="text-gray-500 font-mono">[\${timestamp}]</span>
-          \${algorithmBadge}
-          <span class="\${colors[type]} font-medium">\${message}</span>
-        \`;
-        
-        if (history.children.length === 1 && history.children[0].textContent.includes('No algorithms')) {
-          history.innerHTML = '';
-        }
-        
-        history.insertBefore(historyEntry, history.firstChild);
-        
-        // Keep only last 15 entries
-        while (history.children.length > 15) {
-          history.removeChild(history.lastChild);
-        }
-      }
-
-      function addToOutput(algorithmId, message, type = 'info') {
-        const outputElement = document.getElementById(\`algorithm\${algorithmId}Output\');
-        if (!outputElement) return;
-        
-        const timestamp = new Date().toLocaleTimeString();
-        const colors = {
-          info: 'text-green-400',
-          success: 'text-green-300',
-          warning: 'text-yellow-400',
-          error: 'text-red-400'
-        };
-        
-        const outputLine = document.createElement('div');
-        outputLine.className = \`\${colors[type]} mb-1\`;
-        outputLine.innerHTML = \`<span class="text-gray-500">[\${timestamp}]</span> \${message}\`;
-        
-        // Clear "Ready to execute" message if it exists
-        if (outputElement.children.length === 1 && outputElement.children[0].textContent.includes('Ready to execute')) {
-          outputElement.innerHTML = '';
-        }
-        
-        outputElement.appendChild(outputLine);
-        outputElement.scrollTop = outputElement.scrollHeight;
-      }
-
-      function simulateResourceUsage(algorithmId, duration = 2000) {
-        return new Promise((resolve) => {
-          const startTime = Date.now();
-          const interval = setInterval(() => {
-            const elapsed = Date.now();
-            const progress = elapsed / duration;
-            
-            if (algorithmId === 1) {
-              // CPU intensive simulation
-              currentCpuCode = Math.min(85, Math.round(20 + (progress * 60) + (Math.random() * 15)));
-              currentMemoryCode = Math.min(35, Math.round(5 + (progress * 25) + (Math.random() * 5)));
-            } else if (algorithmId === 2) {
-              // Memory intensive simulation
-              currentCpuCode = Math.min(50, Math.round(10 + (progress * 30) + (Math.random() * 10)));
-              currentMemoryCode = Math.min(80, Math.round(15 + (progress * 55) + (Math.random() * 10)));
-            }
-            
-            updateResourceDisplayCode();
-            
-            if (elapsed >= duration) {
-              clearInterval(interval);
-              resolve();
-            }
-          }, 100);
-        });
-      }
-
-      function coolDownResources() {
-        return new Promise((resolve) => {
-          const coolDownInterval = setInterval(() => {
-            currentCpuCode = Math.max(0, currentCpuCode - 8);
-            currentMemoryCode = Math.max(0, currentMemoryCode - 5);
-            updateResourceDisplayCode();
-            
-            if (currentCpuCode <= 0 && currentMemoryCode <= 0) {
-              clearInterval(coolDownInterval);
-              resolve();
-            }
-          }, 150);
-        });
-      }
-
-      function updateButtons(disabled) {
-        const btn1 = document.getElementById('runAlgo1Btn');
-        const btn2 = document.getElementById('runAlgo2Btn');
-        const btn3 = document.getElementById('runBothBtn');
-        
-        if (btn1) btn1.disabled = disabled;
-        if (btn2) btn2.disabled = disabled;
-        if (btn3) btn3.disabled = disabled;
-      }
-
-      function updateSummaryStats() {
-        totalExecutionsCode++;
-        const avgTime = totalExecutionsCode > 0 ? Math.round(totalExecutionTimeCode / totalExecutionsCode) : 0;
-        const successRate = totalExecutionsCode > 0 ? Math.round((successfulExecutionsCode / totalExecutionsCode) * 100) : 100;
-        
-        const totalExec = document.getElementById('totalExecutionsCode');
-        const avgExecTime = document.getElementById('avgExecutionTimeCode');
-        const successRateEl = document.getElementById('successRateCode');
-        const errorCountEl = document.getElementById('errorCountCode');
-        
-        if (totalExec) totalExec.textContent = totalExecutionsCode;
-        if (avgExecTime) avgExecTime.textContent = avgTime + 'ms';
-        if (successRateEl) successRateEl.textContent = successRate + '%';
-        if (errorCountEl) errorCountEl.textContent = errorCountCode;
-      }
-
-async function executeUserCode(code, algorithmId) {
-  try {
-    addToOutput(algorithmId, 'Executing algorithm...', 'info');
-    
-    // Simulate code execution with some processing time
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-    
-    // Try to evaluate the code (in a real implementation, this would be sandboxed)
-    let result;
-    try {
-      // Create a console.log capture
-      const logs = [];
-      const originalConsoleLog = console.log;
-      console.log = (...args) => {
-        const message = args.map(arg => 
-          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-        ).join(' ');
-        logs.push(message);
-        addToOutput(algorithmId, message, 'info');
-      };
-      
-      // Execute the code in a safer way
-      try {
-        // If it's a function definition, execute it
-        if (code.includes('function ') || code.includes('=>')) {
-          const func = new Function(code + '; return typeof ' + code.match(/function\\s+(\\w+)/)?.[1] + ' !== "undefined" ? ' + code.match(/function\\s+(\\w+)/)?.[1] + '() : "Code executed"');
-          result = func();
-        } else {
-          // Direct code execution
-          const func = new Function(code);
-          result = func();
-        }
-        
-        // Restore console.log
-        console.log = originalConsoleLog;
-        
-        addToOutput(algorithmId, 'Execution completed successfully', 'success');
-        if (result !== undefined) {
-          addToOutput(algorithmId, 'Return value: ' + JSON.stringify(result), 'info');
-        }
-        
-        return { success: true, result, logs };
-      } catch (execError) {
-        // Restore console.log
-        console.log = originalConsoleLog;
-        addToOutput(algorithmId, 'Execution Error: ' + execError.message, 'error');
-        return { success: false, error: execError.message };
-      }
-    } catch (error) {
-      addToOutput(algorithmId, 'Code Parsing Error: ' + error.message, 'error');
-      return { success: false, error: error.message };
-    }
-  } catch (error) {
-    addToOutput(algorithmId, 'Runtime Error: ' + error.message, 'error');
-    return { success: false, error: error.message };
-  }
-}
-
-      async function runAlgorithmCode(algorithmId) {
-        if (isRunningCode) return;
-        
-        const codeTextarea = document.getElementById(\`algorithm\${algorithmId}Code\`);
-        if (!codeTextarea) return;
-        
-        const code = codeTextarea.value.trim();
-        if (!code) {
-          addToOutput(algorithmId, 'No code to execute', 'warning');
-          return;
-        }
-        
-        isRunningCode = true;
-        updateButtons(true);
-        
-        const startTime = Date.now();
-        addToExecutionHistory(\`Started Algorithm \${algorithmId}\`, 'info', algorithmId);
-        
-        try {
-          // Simulate resource usage
-          await simulateResourceUsage(algorithmId, 2000 + Math.random() * 2000);
-          
-          // Execute the user code
-          const executionResult = await executeUserCode(code, algorithmId);
-          
-          const executionTime = Date.now() - startTime;
-          totalExecutionTimeCode += executionTime;
-          
-          if (executionResult.success) {
-            successfulExecutionsCode++;
-            addToExecutionHistory(\`Algorithm \${algorithmId} completed successfully (\${executionTime}ms)\`, 'success', algorithmId);
-          } else {
-            errorCountCode++;
-            addToExecutionHistory(\`Algorithm \${algorithmId} failed: \${executionResult.error}\`, 'error', algorithmId);
-          }
-          
-          updateSummaryStats();
-          
-        } catch (error) {
-          errorCountCode++;
-          addToExecutionHistory(\`Algorithm \${algorithmId} crashed: \${error.message}\`, 'error', algorithmId);
-        } finally {
-          // Cool down resources
-          await coolDownResources();
-          isRunningCode = false;
-          updateButtons(false);
-        }
-      }
-
-      async function runBothAlgorithmCodes() {
-        if (isRunningCode) return;
-        
-        addToExecutionHistory('Starting both algorithms simultaneously', 'info');
-        
-        // Run both algorithms concurrently
-        await Promise.all([
-          runAlgorithmCode(1),
-          runAlgorithmCode(2)
-        ]);
-        
-        addToExecutionHistory('Both algorithms completed', 'success');
-      }
-
-      // Expose functions to global scope
-      window.runAlgorithmCode = runAlgorithmCode;
-      window.runBothAlgorithmCodes = runBothAlgorithmCodes;
-
-      // Initialize display when DOM is ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateResourceDisplayCode);
-      } else {
-        updateResourceDisplayCode();
-      }
-    })();
-  `,
-              }}
-            />
           </div>
         )
+      }
 
       case "project3":
         return (
@@ -2813,6 +2488,12 @@ async function executeUserCode(code, algorithmId) {
                   </div>
                 </div>
 
+                {/* Q&A List */}
+                <div id="qaList" className="mt-6 bg-gray-50 rounded-lg p-4 hidden">
+                  <h4 className="font-semibold text-gray-900 mb-2">Loaded Q&A Pairs:</h4>
+                  <div id="qaListContent" className="space-y-2"></div>
+                </div>
+
                 {/* Sample Format */}
                 <div className="mt-6 bg-gray-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">Expected Excel Format:</h4>
@@ -3000,6 +2681,15 @@ async function executeUserCode(code, algorithmId) {
               let messageCount = 1;
               let successfulMatches = 0;
 
+              // Load knowledge base from localStorage if available
+              if (localStorage.getItem('chatbotKnowledgeBase')) {
+                try {
+                  knowledgeBase = JSON.parse(localStorage.getItem('chatbotKnowledgeBase')) || [];
+                } catch (e) {
+                  knowledgeBase = [];
+                }
+              }
+
               // File upload handling
               function handleFileUpload() {
                 const fileInput = document.getElementById('excelFileInput');
@@ -3029,7 +2719,7 @@ async function executeUserCode(code, algorithmId) {
               }
 
               function parseCSV(csvText) {
-                const lines = csvText.split('\\n');
+                const lines = csvText.split('\n');
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
                 const questionIndex = headers.findIndex(h => h.toLowerCase().includes('question'));
@@ -3052,8 +2742,12 @@ async function executeUserCode(code, algorithmId) {
                   }
                 }
 
+                // Save to localStorage
+                localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeBase));
+
                 showUploadSuccess(knowledgeBase.length + ' Q&A pairs loaded from CSV');
                 updateStats();
+                renderQAList();
               }
 
               function simulateExcelParsing(fileName) {
@@ -3081,8 +2775,12 @@ async function executeUserCode(code, algorithmId) {
                   }
                 ];
 
+                // Save to localStorage
+                localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeBase));
+
                 showUploadSuccess(knowledgeBase.length + ' Q&A pairs loaded from ' + fileName);
                 updateStats();
+                renderQAList();
               }
 
               function showUploadSuccess(message) {
@@ -3364,6 +3062,9 @@ async function executeUserCode(code, algorithmId) {
                   updateStats();
                 });
               }
+
+              // Render Q&A list on page load
+              renderQAList();
             })();
           `,
               }}
@@ -3438,6 +3139,44 @@ async function executeUserCode(code, algorithmId) {
           </div>
         )
 
+      case "project6":
+        return (
+          <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow space-y-6 mt-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Add Blog Content</h1>
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter blog title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                <textarea
+                  className="w-full border border-gray-300 rounded px-3 py-2 h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter blog content"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
+              >
+                Add Blog Post
+              </button>
+            </form>
+          </div>
+        )
+
       // Handle all industry-specific pages with a generic template
       default:
         if (currentPage.startsWith("industries-")) {
@@ -3482,4 +3221,18 @@ async function executeUserCode(code, algorithmId) {
   }
 
   return <div className="p-6">{renderContent()}</div>
+}
+
+function renderQAList() {
+  const qaListDiv = document.getElementById('qaList');
+  const qaListContent = document.getElementById('qaListContent');
+  if (!qaListDiv || !qaListContent) return;
+  if (!knowledgeBase || knowledgeBase.length === 0) {
+    qaListDiv.classList.add('hidden');
+    return;
+  }
+  qaListDiv.classList.remove('hidden');
+  qaListContent.innerHTML = knowledgeBase.map((qa, i) =>
+    `<div class='p-2 bg-white rounded border border-gray-200'><b>Q${i+1}:</b> ${qa.question}<br/><b>A:</b> ${qa.answer}</div>`
+  ).join('');
 }
